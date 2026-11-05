@@ -800,6 +800,9 @@ footer#help { color: #fff; background: #01324f; }
   margin-top: 0;
   padding-top: 4px;
   background: linear-gradient(180deg, #f3f2f1 0%, #fff 72px);
+  /* Stronger outlines on white cards (Fluent neutral — same as kit chips/filters) */
+  --kit3-outline: #c8c6c4;
+  --kit3-outline-inner: #d2d0ce;
 }
 .kit3-group > section + section {
   margin-top: 4vh;
@@ -821,7 +824,7 @@ footer#help { color: #fff; background: #01324f; }
 
 .kit3-corporate {
   padding-block: 0;
-  background: #fff;
+  background: transparent;
 }
 .kit3-corporate__card {
   display: flex;
@@ -830,11 +833,11 @@ footer#help { color: #fff; background: #01324f; }
   justify-content: space-between;
   gap: 12px 20px;
   padding: 14px 18px;
-  border: 1px solid #edebe9;
+  border: 1px solid var(--kit3-outline);
   border-left: 4px solid #012d90;
   border-radius: 4px;
   background: #fff;
-  box-shadow: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 .kit3-corporate__card h3 {
   margin: 2px 0 0;
@@ -860,7 +863,7 @@ footer#help { color: #fff; background: #01324f; }
 
 .kit3-leadership {
   padding-block: 0;
-  background: #fff;
+  background: transparent;
 }
 .kit3-leadership__layout {
   display: grid;
@@ -872,10 +875,10 @@ footer#help { color: #fff; background: #01324f; }
 .kit3-ceo-list {
   display: flex;
   flex-direction: column;
-  border: 1px solid #edebe9;
+  border: 1px solid var(--kit3-outline);
   border-radius: 4px;
   background: #fff;
-  box-shadow: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   overflow: hidden;
 }
 .kit3-ceo-list__item {
@@ -884,7 +887,7 @@ footer#help { color: #fff; background: #01324f; }
   gap: 10px 14px;
   align-items: center;
   padding: 11px 14px;
-  border-bottom: 1px solid #edebe9;
+  border-bottom: 1px solid var(--kit3-outline-inner);
   color: inherit;
   text-decoration: none;
 }
@@ -920,10 +923,10 @@ footer#help { color: #fff; background: #01324f; }
 }
 .kit3-panel {
   padding: 14px 16px;
-  border: 1px solid #edebe9;
+  border: 1px solid var(--kit3-outline);
   border-radius: 4px;
   background: #fff;
-  box-shadow: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 .kit3-panel h3 {
   margin: 4px 0 0;
@@ -985,7 +988,7 @@ footer#help { color: #fff; background: #01324f; }
   grid-template-columns: minmax(132px, 168px) minmax(0, 1fr);
   min-height: 220px;
   overflow: hidden;
-  border: 1px solid #edebe9;
+  border: 1px solid var(--kit3-outline);
   border-bottom: 4px solid #007ead;
   border-radius: 4px;
   background: #fff;
