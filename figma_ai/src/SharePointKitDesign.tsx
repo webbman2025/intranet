@@ -67,7 +67,7 @@ function useGuideEmbedMetrics() {
   }, [])
 }
 
-type KIconName = "apps" | "bell" | "calendar" | "chevron" | "file" | "gear" | "help" | "home" | "mail" | "menu" | "people" | "search" | "shield" | "spark"
+type KIconName = "apps" | "bell" | "calendar" | "chevron" | "file" | "gear" | "help" | "home" | "mail" | "menu" | "people" | "search" | "shield" | "spark" | "thumbUp"
 
 function KIcon({ name, size = 20 }: { name: KIconName; size?: number }) {
   const paths: Record<KIconName, React.ReactNode> = {
@@ -143,6 +143,12 @@ function KIcon({ name, size = 20 }: { name: KIconName; size?: number }) {
     ),
     spark: (
       <path d="m12 3 1.5 5.5L18 6l-2.5 5.5L21 13l-5.5 1.5L18 20l-5.5-2.5L11 23l-1.5-5.5L4 20l2.5-5.5L1 13l5.5-1.5L4 6l5.5 2.5L12 3Z" />
+    ),
+    thumbUp: (
+      <>
+        <path d="M7 11v8" />
+        <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z" />
+      </>
     ),
   }
   return (
@@ -1344,15 +1350,17 @@ export default function SharePointKitDesign({
                     <small>18 November 2026 · 3 min read</small>
                     <div className="kit-social-actions">
                       <button
+                        type="button"
                         className={likedStory === story.title ? "liked" : ""}
                         onClick={() =>
                           setLikedStory(
                             likedStory === story.title ? null : story.title,
                           )
                         }
+                        aria-label="Like"
                         aria-pressed={likedStory === story.title}
                       >
-                        <KIcon name="spark" size={15} />
+                        <KIcon name="thumbUp" size={15} />
                         {likedStory === story.title ? 25 : 24}
                       </button>
                       <a href={`#comments-${story.title}`}>

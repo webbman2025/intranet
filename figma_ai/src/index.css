@@ -910,7 +910,7 @@ footer#help { color: #fff; background: #01324f; }
 .kit3-leadership__aside {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 6px;
   min-height: 100%;
 }
 .kit3-leadership__aside .kit3-panel {
