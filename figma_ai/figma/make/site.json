@@ -1,0 +1,10 @@
+{
+  "description": "A responsive HTHK staff intranet homepage that helps employees quickly find applications, news, department resources, and support.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

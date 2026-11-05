@@ -1,0 +1,8 @@
+{
+  "installCommand": "npm install --prefix figma_ai",
+  "buildCommand": "npm run build --prefix figma_ai",
+  "outputDirectory": "figma_ai/dist",
+  "rewrites": [
+    { "source": "/guide", "destination": "/sharepoint-kit-homepage-guide.html" }
+  ]
+}

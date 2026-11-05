@@ -1,0 +1,9 @@
+.DS_Store
+*.zip
+.env
+.env.*
+node_modules/
+figma_ai/node_modules/
+figma_ai/dist/
+hthk_intranet/assets/index-*.js
+hthk_intranet/assets/index-*.css

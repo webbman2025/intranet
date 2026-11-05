@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HTHK Intranet — SharePoint Kit 2 Homepage Guide</title>
+  <style>
+    :root {
+      --navy: #012d90;
+      --blue: #007bc7;
+      --orange: #ff6600;
+      --ink: #323130;
+      --muted: #605e5c;
+      --line: #edebe9;
+      --bg: #f4f6fb;
+      --card: #fff;
+      --side-col: 188px;
+      --preview-max: 1080px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      font-size: 16px;
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    .page-header {
+      background: linear-gradient(135deg, var(--navy), #1a4bb8);
+      color: #fff;
+      padding: 1.75rem 1.5rem 2rem;
+    }
+
+    .page-header h1 {
+      margin: 0 0 0.35rem;
+      font-size: clamp(1.35rem, 3vw, 1.75rem);
+      font-weight: 600;
+    }
+
+    .page-header p {
+      margin: 0;
+      max-width: 42rem;
+      opacity: 0.92;
+      font-size: 0.95rem;
+    }
+
+    .page-header .meta {
+      margin-top: 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .pill {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+    }
+
+    .page-header a {
+      color: #b8e4ff;
+    }
+
+    /* Three-column: notes | desktop preview | notes */
+    .guide-shell {
+      width: 100%;
+      max-width: min(1580px, 100%);
+      margin: 0 auto;
+      padding: 1.5rem 0.75rem 3rem;
+      overflow-x: hidden;
+    }
+
+    .guide-grid {
+      display: grid;
+      grid-template-columns: var(--side-col) minmax(0, var(--preview-max)) var(--side-col);
+      grid-template-areas: "notes-left preview notes-right";
+      gap: 0.75rem;
+      align-items: start;
+    }
+
+    .note-col--left { grid-area: notes-left; }
+    .guide-preview {
+      grid-area: preview;
+      min-width: 0;
+      width: 100%;
+    }
+    .note-col--right { grid-area: notes-right; }
+
+    .guide-preview {
+      position: sticky;
+      top: 1rem;
+      border: 1px solid #c8d0dc;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 10px 32px rgba(1, 45, 144, 0.14);
+      margin: 0;
+    }
+
+    .guide-preview__head {
+      padding: 0.55rem 0.75rem;
+      background: var(--navy);
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    .guide-preview__scroll {
+      max-height: calc(100vh - 5.5rem);
+      overflow: auto;
+      overscroll-behavior: contain;
+      background: #faf9f8;
+    }
+
+    .guide-preview__canvas {
+      position: relative;
+      line-height: 0;
+      min-height: 24rem;
+    }
+
+    .guide-preview__canvas iframe {
+      display: block;
+      width: 100%;
+      border: 0;
+      vertical-align: top;
+      background: #faf9f8;
+    }
+
+    .guide-preview__canvas.is-loading iframe {
+      opacity: 0.35;
+    }
+
+    .preview-markers {
+      position: absolute;
+      inset: 0;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      pointer-events: none;
+    }
+
+    .preview-markers li {
+      position: absolute;
+      left: 8px;
+      top: 0;
+      transform: translateY(-50%);
+      pointer-events: auto;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .guide-preview__canvas.is-ready .preview-markers li {
+      opacity: 1;
+    }
+
+    .preview-markers a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 1.35rem;
+      height: 1.35rem;
+      padding: 0 0.2rem;
+      border-radius: 999px;
+      background: var(--navy);
+      color: #fff;
+      font-size: 0.62rem;
+      font-weight: 800;
+      line-height: 1;
+      text-decoration: none;
+      border: 2px solid #fff;
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
+    }
+
+    .preview-markers a:hover {
+      background: var(--orange);
+      transform: scale(1.08);
+    }
+
+    .preview-markers li:nth-child(even) a {
+      background: #007ead;
+    }
+
+    .guide-preview__foot {
+      padding: 0.55rem 0.75rem;
+      font-size: 0.75rem;
+      line-height: 1.4;
+      color: var(--muted);
+      background: #f3f2f1;
+      border-top: 1px solid var(--line);
+    }
+
+    .guide-preview__foot a { color: #006eaf; font-weight: 600; }
+
+    .note-col {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      min-width: 0;
+      max-width: var(--side-col);
+    }
+
+    .preview-fallback {
+      display: none;
+      padding: 2rem 1rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.875rem;
+      background: #fff4eb;
+      border: 1px dashed var(--orange);
+    }
+
+    .preview-fallback code { font-size: 0.8rem; }
+
+    #preview-retry {
+      margin-top: 0.75rem;
+      padding: 0.45rem 0.85rem;
+      font: inherit;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: #fff;
+      background: var(--navy);
+      border: 0;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    #preview-retry:hover { background: var(--blue); }
+
+    .note {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      padding: 0.55rem 0.6rem;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+      scroll-margin-top: 5rem;
+    }
+
+    .note--left { border-left: 3px solid var(--blue); }
+    .note--right { border-left: 3px solid var(--orange); }
+
+    .note:target {
+      outline: 2px solid var(--orange);
+      outline-offset: 1px;
+    }
+
+    .note .num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.25rem;
+      height: 1.25rem;
+      border-radius: 50%;
+      background: var(--navy);
+      color: #fff;
+      font-size: 0.65rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .note h3 {
+      margin: 0 0 0.35rem;
+      font-size: 0.8125rem;
+      color: var(--navy);
+      line-height: 1.25;
+    }
+
+    .note dl {
+      margin: 0;
+      font-size: 0.75rem;
+    }
+
+    .note dt {
+      font-weight: 700;
+      color: var(--ink);
+      margin-top: 0.35rem;
+      font-size: 0.7rem;
+    }
+
+    .note dt:first-of-type { margin-top: 0; }
+
+    .note dd {
+      margin: 0.1rem 0 0;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .note .sp-tag {
+      display: inline-block;
+      margin-top: 0.35rem;
+      font-size: 0.625rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #007ead;
+      background: #eef8fc;
+      padding: 0.2rem 0.45rem;
+      border-radius: 2px;
+    }
+
+    @media (max-width: 1440px) {
+      .guide-grid {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+          "preview"
+          "notes-left"
+          "notes-right";
+        gap: 0.75rem;
+      }
+      .guide-preview {
+        position: static;
+        width: 100%;
+        max-width: min(var(--preview-max), 100%);
+        margin: 0 auto 0.5rem;
+      }
+      .guide-preview__scroll {
+        max-height: none;
+      }
+      .note-col {
+        max-width: 36rem;
+        margin-inline: auto;
+        width: 100%;
+      }
+      .note dl { font-size: 0.8125rem; }
+      .note h3 { font-size: 0.9rem; }
+    }
+
+    footer.doc-footer {
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+      background: #fff;
+    }
+  </style>
+</head>
+<body>
+  <header class="page-header">
+    <h1>SharePoint Kit 2 — Homepage layout guide</h1>
+    <p>
+      What each band is for, why it sits where it does, and how it maps to the legacy HTHK intranet
+      and Modern SharePoint building blocks. Bundled mock in this
+      <code>hthk_intranet/</code> folder (SharePoint Kit 2 · full-width hero).
+    </p>
+    <div class="meta">
+      <span class="pill">Audience: product, comms, SharePoint dev</span>
+      <span class="pill">Max content width 1204px (hero full bleed on Kit 2)</span>
+      <span class="pill">Mobile: hero carousel · horizontal app tiles</span>
+    </div>
+    <p style="margin-top: 1rem; font-size: 0.85rem;">
+      Centre panel: <strong>live SharePoint Kit 2 mock</strong> from
+      <code>index.html</code> in this folder (serve over http/https, not file://).
+    </p>
+  </header>
+
+  <div class="guide-shell">
+    <div class="guide-grid" aria-label="Homepage layout with section explanations">
+      <div class="note-col note-col--left" aria-label="Sections 1–7">
+        <article class="note note--left" id="n1">
+          <span class="num">1</span>
+          <h3>Microsoft 365 suite bar</h3>
+          <dl>
+            <dt>What</dt>
+            <dd>Global M365 chrome: app launcher, SharePoint label, search (“Ask HTHK AI”), profile.</dd>
+            <dt>Why it exists</dt>
+            <dd>Staff expect the same shell as other M365 apps; search is the primary “ask anything” entry.</dd>
+            <dt>Why here (top)</dt>
+            <dd>Fixed/sticky at the top—standard for SharePoint Online and hub sites; never scrolls away.</dd>
+          </dl>
+          <span class="sp-tag">SharePoint: suite bar + search (Copilot-ready copy in mock)</span>
+        </article>
+
+        <article class="note note--left" id="n2">
+          <span class="num">2</span>
+          <h3>Left app rail</h3>
+          <dl>
+            <dt>What</dt>
+            <dd>Icon rail (Home, Viva Engage-style spark, files, people)—M365 wayfinding.</dd>
+            <dt>Why</dt>
+            <dd>Reinforces “you are in the Microsoft ecosystem,” not a standalone legacy frame.</dd>
+            <dt>Why here</dt>
+            <dd>Desktop only; hidden on mobile to save horizontal space.</dd>
+          </dl>
+          <span class="sp-tag">SharePoint: global nav / app bar pattern</span>
+        </article>
+
+        <article class="note note--left" id="n3">
+          <span class="num">3</span>
+          <h3>Site header &amp; hub navigation</h3>
+          <dl>
+            <dt>What</dt>
+            <dd>HTHK Intranet title, member count, Follow, and links: Home, My tools, Staff announcements, Staff services, Policies &amp; forms, Learning &amp; community.</dd>
+            <dt>Why</dt>
+            <dd>Replaces legacy top frame + dept menu with <strong>task-based hubs</strong> instead of organisation chart.</dd>
+            <dt>Why here</dt>
+            <dd>Immediately under M365 bar—defines site identity before any content; nav anchors jump to on-page sections.</dd>
+          </dl>
+          <span class="sp-tag">SharePoint: site header + hub navigation</span>
+        </article>
+
+        <article class="note note--left" id="n4">
+          <span class="num">4</span>
+          <h3>Personal bar (“For you, Alex”)</h3>
+          <dl>
+            <dt>What</dt>
+            <dd>Personalisation status, AI trust line, link to personalise the page.</dd>
+            <dt>Why</dt>
+            <dd>Sets expectation for targeted home experience and responsible AI (grounded in HTHK sources).</dd>
+            <dt>Why here</dt>
+            <dd>Between nav and hero—brief context before featured content; full width on Kit 2.</dd>
+          </dl>
+          <span class="sp-tag">SharePoint: personalisation / Viva-style messaging (optional web part)</span>
+        </article>
+
+        <article class="note note--left" id="n5">
+          <span class="num">5</span>
+          <h3>Featured stories hero</h3>
+          <dl>
+            <dt>What</dt>
+            <dd>Five-tile hero (one large featured story + four tiles). Kit 2: <strong>full viewport width</strong>. Mobile: swipe carousel with dots.</dd>
+            <dt>Why</dt>
+            <dd>Carries corporate priorities (anniversary, dinner, culture, sustainability, security training)—modern comms site pattern.</dd>
+            <dt>Why here</dt>
+            <dd>First visual impact after personal bar; answers “what matters now?” before tools and lists.</dd>
+          </dl>
+          <span class="sp-tag">SharePoint: Hero web part (multi-tile layout may need custom SPFx or creative layout)</span>
+        </article>
+
+        <article class="note note--left" id="n6">
+          <span class="num">6</span>
+          <h3>Online applications</h3>
+          <dl>
+            <dt>What</dt>
+            <dd>Quick links: HCM, Webmail, Directory, eLearning, e-Form, IT desk, Room booking, Benefits.</dd>
+            <dt>Why</dt>
+            <dd>Direct successor to legacy <strong>Online Applications</strong>— highest-frequency daily actions.</dd>
+            <dt>Why here</dt>
+            <dd>Directly under hero: “read news → do work.” Desktop grid; mobile horizontal rounded tiles.</dd>
+          </dl>
+          <span class="sp-tag">SharePoint: Quick links web part</span>
+        </article>
+
+        <article class="note note--left" id="n7">
+          <span class="num">7</span>
+          <h3>Staff announcements</h3>
+          <dl>
+            <dt>What</dt>
+            <dd>Three highlight cards: staff offers, new colleagues, CEO message—with image, type, date, CTA.</dd>
+            <dt>Why</dt>
+            <dd>Centralises “must know” HR/comms/leadership items; more prominent than a simple link list.</dd>
+            <dt>Why here</dt>
+            <dd>After apps: urgent/important messages before the longer news feed.</dd>
+          </dl>
+          <span class="sp-tag">SharePoint: News / Highlighted content web parts</span>
+        </article>
+      </div>
+
+      <figure class="guide-preview" aria-label="SharePoint Kit 2 desktop homepage">
+        <div class="guide-preview__head">Desktop · SharePoint Kit 2 · live embed</div>
+        <div class="guide-preview__scroll">
+          <div class="guide-preview__canvas is-loading" id="preview-canvas">
+            <iframe
+              id="kit-preview-frame"
+              title="HTHK Intranet SharePoint Kit 2 homepage mock"
+              loading="lazy"
+              referrerpolicy="no-referrer"
+            ></iframe>
+            <div id="preview-fallback" class="preview-fallback">
+              <p><strong>Mock could not load.</strong></p>
+              <p>Ensure <code>index.html</code> is in the same folder and this page is opened via your UAT web server.</p>
+              <p>Direct link: <code>index.html?design=kit2&amp;embed=1&amp;guide=1</code></p>
+              <p><button type="button" id="preview-retry">Try again</button></p>
+            </div>
+            <ol class="preview-markers" aria-label="Section numbers on homepage">
+              <li data-n="1"><a href="#n1" title="1 · M365 suite bar">1</a></li>
+              <li data-n="2"><a href="#n2" title="2 · Left app rail">2</a></li>
+              <li data-n="3"><a href="#n3" title="3 · Site header &amp; nav">3</a></li>
+              <li data-n="4"><a href="#n4" title="4 · Personal bar">4</a></li>
+              <li data-n="5"><a href="#n5" title="5 · Featured hero">5</a></li>
+              <li data-n="6"><a href="#n6" title="6 · Online applications">6</a></li>
+              <li data-n="7"><a href="#n7" title="7 · Staff announcements">7</a></li>
+              <li data-n="8"><a href="#n8" title="8 · What’s hot">8</a></li>
+              <li data-n="9"><a href="#n9" title="9 · HTHK Mobile">9</a></li>
+              <li data-n="10"><a href="#n10" title="10 · Staff essentials">10</a></li>
+              <li data-n="11"><a href="#n11" title="11 · Policies &amp; forms">11</a></li>
+              <li data-n="12"><a href="#n12" title="12 · Company events">12</a></li>
+              <li data-n="13"><a href="#n13" title="13 · People &amp; culture">13</a></li>
+              <li data-n="14"><a href="#n14" title="14 · Staff services">14</a></li>
+              <li data-n="15"><a href="#n15" title="15 · Footer">15</a></li>
+            </ol>
+          </div>
+        </div>
+        <figcaption class="guide-preview__foot">
+          Embedded mock with <strong>numbered pins</strong> aligned to each section (updates on resize).
+          Pins jump to side notes; scroll inside the panel to explore the full page.
+          Open in a tab:
+          <a href="./index.html?design=kit2&amp;embed=1" target="_blank" rel="noopener">open mock</a>.
+        </figcaption>
+      </figure>
+
+      <div class="note-col note-col--right" aria-label="Sections 8–15">
+        <article class="note note--right" id="n8">
+          <span class="num">8</span>
+          <h3>What’s hot</h3>
+          <dl>
+            <dt>What</dt>
+            <dd>Home teaser → article; <strong>See all</strong>, topic badge, or hub nav <strong>News</strong> → site news page: title bar, topic filters (sidebar desktop / scroll chips mobile), promoted story + 3-column card grid with excerpt and metadata.</dd>
+            <dt>Why</dt>
+            <dd>Legacy <strong>What’s Hot</strong>—ongoing updates; topics = news metadata / publishing teams.</dd>
+            <dt>Why here</dt>
+            <dd>Below announcements: deeper news feed after time-sensitive highlights.</dd>
+          </dl>
+          <span class="sp-tag">SharePoint: News web part (home) + News site page / filtered view</span>
+        </article>
+
+        <article class="note note--right" id="n9">
+          <span class="num">9</span>
+          <h3>HTHK Mobile (app download)</h3>
+          <dl>
+            <dt>What</dt>
+            <dd>Promo for intranet on phone: benefits list, App Store / Play CTAs, phone mock + QR placeholder.</dd>
+            <dt>Why</dt>
+            <dd>Single place for mobile story (responsive site + optional app). Replaces a removed duplicate banner.</dd>
+            <dt>Why here</dt>
+            <dd>Mid-page break after news—staff who scroll for content see mobile option once; devs should align copy with real app (SharePoint app vs custom HTHK app).</dd>
+          </dl>
+          <span class="sp-tag">SharePoint: Text + button / Image web parts; store links if applicable</span>
+        </article>
+
+        <article class="note note--right" id="n10">
+          <span class="num">10</span>
+          <h3>Staff essentials</h3>
+          <dl>
+            <dt>What</dt>
+            <dd>Filmstrip: shuttle bus, cafeteria menu, Staff Jetso offers.</dd>
+            <dt>Why</dt>
+            <dd>High-traffic operational info from legacy intranet (admin, facilities, benefits).</dd>
+            <dt>Why here</dt>
+            <dd>After mobile block—practical “everyday” links before formal policies.</dd>
+          </dl>
+          <span class="sp-tag">SharePoint: Quick links + images or Highlighted content</span>
+        </article>
+
+        <article class="note note--right" id="n11">
+          <span class="num">11</span>
+          <h3>Trusted policies and forms</h3>
+          <dl>
+            <dt>What</dt>
+            <dd>Grid of handbook, expenses, security policies, HCM guide, typhoon policy, medical benefits.</dd>
+            <dt>Why</dt>
+            <dd>Legacy popular documents; emphasises <strong>governed central repository</strong> after migration.</dd>
+            <dt>Why here</dt>
+            <dd>Mid-lower page—important but not first click; compliance content after tasks and news.</dd>
+          </dl>
+          <span class="sp-tag">SharePoint: Document library links / Quick links</span>
+        </article>
+
+        <article class="note note--right" id="n12">
+          <span class="num">12</span>
+          <h3>Company events</h3>
+          <dl>
+            <dt>What</dt>
+            <dd>Upcoming events with date badge, title, time/location, view link.</dd>
+            <dt>Why</dt>
+            <dd>Supports participation and internal comms; complements news with dated commitments.</dd>
+            <dt>Why here</dt>
+            <dd>Lower third—planning horizon after policies; neutral background band for visual rhythm.</dd>
+          </dl>
+          <span class="sp-tag">SharePoint: Events web part</span>
+        </article>
+
+        <article class="note note--right" id="n13">
+          <span class="num">13</span>
+          <h3>People and culture</h3>
+          <dl>
+            <dt>What</dt>
+            <dd>Large image + headline “Grow, connect and make a difference” + CTA to people &amp; culture.</dd>
+            <dt>Why</dt>
+            <dd>Ties to hub nav “Learning &amp; community”; emotional balance to policy/event blocks.</dd>
+            <dt>Why here</dt>
+            <dd>Before staff services grid—storytelling before structured browse tiles.</dd>
+          </dl>
+          <span class="sp-tag">SharePoint: Hero / Image + text web part</span>
+        </article>
+
+        <article class="note note--right" id="n14">
+          <span class="num">14</span>
+          <h3>Staff services (browse by need)</h3>
+          <dl>
+            <dt>What</dt>
+            <dd>Six task hubs: Pay &amp; benefits, Working at HTHK, Learning, Workplace services, Wellbeing, IT.</dd>
+            <dt>Why</dt>
+            <dd>Replaces dept-by-dept navigation with <strong>jobs to be done</strong>—core revamp idea.</dd>
+            <dt>Why here</dt>
+            <dd>Near bottom: power users and explorers; deep links to associated sites/libraries.</dd>
+          </dl>
+          <span class="sp-tag">SharePoint: Hub links / Card layout web part</span>
+        </article>
+
+        <article class="note note--right" id="n15">
+          <span class="num">15</span>
+          <h3>Footer</h3>
+          <dl>
+            <dt>What</dt>
+            <dd>HTHK Intranet branding, privacy, directory, suggestion box, accessibility, help desk.</dd>
+            <dt>Why</dt>
+            <dd>Persistent trust, support, and legal links on every page.</dd>
+            <dt>Why here</dt>
+            <dd>Standard closure; teal band matches HTHK / SharePoint theme extension.</dd>
+          </dl>
+          <span class="sp-tag">SharePoint: Footer placeholder / custom footer extension</span>
+        </article>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="doc-footer">
+    HTHK Intranet revamp · SharePoint Kit 2 homepage guide ·
+    Open <code>sharepoint-kit-homepage-guide.html</code> in a browser ·
+    UAT package · <code>hthk_intranet/</code>
+  </footer>
+  <script>
+    (function () {
+      var MOCK_SRC = "./index.html?design=kit2&embed=1&guide=1";
+      var iframe = document.getElementById("kit-preview-frame");
+      var canvas = document.getElementById("preview-canvas");
+      var fallback = document.getElementById("preview-fallback");
+      var loadTimer = null;
+      var gotMetrics = false;
+
+      function applyMetrics(data) {
+        gotMetrics = true;
+        if (loadTimer) window.clearTimeout(loadTimer);
+        canvas.classList.remove("is-loading");
+        canvas.classList.add("is-ready");
+        fallback.style.display = "none";
+        iframe.style.display = "block";
+        iframe.style.height = data.pageHeight + "px";
+        canvas.style.height = data.pageHeight + "px";
+        data.markers.forEach(function (m) {
+          var li = canvas.querySelector('.preview-markers li[data-n="' + m.n + '"]');
+          if (li && data.pageHeight > 0) {
+            li.style.top = (m.top / data.pageHeight * 100) + "%";
+          }
+        });
+      }
+
+      window.addEventListener("message", function (ev) {
+        var data = ev.data;
+        if (!data || data.type !== "hthk-guide-metrics") return;
+        applyMetrics(data);
+      });
+
+      function loadMock(src, stage) {
+        gotMetrics = false;
+        canvas.classList.add("is-loading");
+        canvas.classList.remove("is-ready");
+        fallback.style.display = "none";
+        iframe.style.display = "block";
+        iframe.dataset.srcStage = stage;
+        if (loadTimer) window.clearTimeout(loadTimer);
+        loadTimer = window.setTimeout(function () {
+          if (gotMetrics) return;
+          iframe.style.display = "none";
+          fallback.style.display = "block";
+          canvas.classList.remove("is-loading");
+        }, 15000);
+        iframe.src = src;
+      }
+
+      document.getElementById("preview-retry").addEventListener("click", function () {
+        loadMock(MOCK_SRC, "dist");
+      });
+
+      loadMock(MOCK_SRC, "dist");
+    })();
+  </script>
+</body>
+</html>

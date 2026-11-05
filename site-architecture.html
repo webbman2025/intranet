@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HTHK Intranet — Site Architecture</title>
+  <style>
+    :root {
+      --brand-navy: #012d90;
+      --brand-orange: #ff6600;
+      --link-blue: #082ebd;
+      --bg: #f4f6fb;
+      --card: #fff;
+      --border: #d8deea;
+      --muted: #5c6478;
+      --frame-header: #e8eefc;
+      --frame-main: #f0faf4;
+      --external: #fff8ed;
+      --server: #f5f0ff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: #1a1f2e;
+      line-height: 1.45;
+    }
+
+    header.page-header {
+      background: linear-gradient(135deg, var(--brand-navy) 0%, #1a4bb8 100%);
+      color: #fff;
+      padding: 1.75rem 2rem 2rem;
+    }
+
+    header.page-header h1 {
+      margin: 0 0 0.35rem;
+      font-size: 1.65rem;
+      font-weight: 600;
+    }
+
+    header.page-header p {
+      margin: 0;
+      opacity: 0.9;
+      font-size: 0.95rem;
+      max-width: 52rem;
+    }
+
+    header.page-header .meta {
+      margin-top: 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .pill {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.5rem 1.25rem 3rem;
+    }
+
+    section {
+      margin-bottom: 2rem;
+    }
+
+    section > h2 {
+      font-size: 1.1rem;
+      color: var(--brand-navy);
+      margin: 0 0 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    section > h2::before {
+      content: "";
+      width: 4px;
+      height: 1.1rem;
+      background: var(--brand-orange);
+      border-radius: 2px;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem 1.25rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 1.25rem;
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .swatch {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      border: 1px solid var(--border);
+    }
+
+    /* Frameset diagram */
+    .frameset {
+      border: 2px solid var(--brand-navy);
+      border-radius: 10px;
+      overflow: hidden;
+      background: var(--card);
+      box-shadow: 0 4px 24px rgba(1, 45, 144, 0.08);
+    }
+
+    .frameset-title {
+      background: var(--brand-navy);
+      color: #fff;
+      padding: 0.6rem 1rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .frame-row {
+      border-bottom: 2px dashed var(--border);
+    }
+
+    .frame-row:last-child {
+      border-bottom: none;
+    }
+
+    .frame-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      padding: 0.5rem 1rem 0;
+    }
+
+    .frame-header-block {
+      background: var(--frame-header);
+      padding: 0.75rem 1rem 1rem;
+      min-height: 120px;
+    }
+
+    .frame-main-block {
+      background: var(--frame-main);
+      padding: 0.75rem 1rem 1.25rem;
+      min-height: 200px;
+    }
+
+    .file-tag {
+      display: inline-block;
+      font-family: ui-monospace, monospace;
+      font-size: 0.78rem;
+      background: #fff;
+      border: 1px solid var(--border);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      margin-bottom: 0.5rem;
+    }
+
+    .nav-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 0.4rem;
+    }
+
+    .nav-item {
+      font-size: 0.72rem;
+      padding: 0.35rem 0.5rem;
+      background: var(--brand-navy);
+      color: #fff;
+      border-radius: 4px;
+      text-align: center;
+    }
+
+    .nav-item.disabled {
+      background: #8a93a8;
+      opacity: 0.85;
+    }
+
+    .nav-item.external-host {
+      background: #2d5a27;
+    }
+
+    .main-zones {
+      display: grid;
+      grid-template-columns: 1fr 220px;
+      gap: 0.75rem;
+    }
+
+    @media (max-width: 700px) {
+      .main-zones { grid-template-columns: 1fr; }
+    }
+
+    .zone {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.65rem 0.75rem;
+    }
+
+    .zone h3 {
+      margin: 0 0 0.5rem;
+      font-size: 0.8rem;
+      color: var(--brand-orange);
+    }
+
+    .zone ul {
+      margin: 0;
+      padding-left: 1.1rem;
+      font-size: 0.75rem;
+    }
+
+    .zone li { margin-bottom: 0.2rem; }
+
+    .arrow-note {
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--muted);
+      padding: 0.5rem;
+      background: #fafbfc;
+      border-top: 1px solid var(--border);
+    }
+
+    /* Tree / path map */
+    .path-tree {
+      font-family: ui-monospace, monospace;
+      font-size: 0.8rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      overflow-x: auto;
+      line-height: 1.6;
+    }
+
+    .path-tree .root { color: var(--brand-navy); font-weight: 700; }
+    .path-tree .folder { color: var(--link-blue); }
+    .path-tree .note { color: var(--muted); font-family: inherit; font-size: 0.75rem; }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.1rem;
+    }
+
+    .card.external { background: var(--external); }
+    .card.server { background: var(--server); }
+
+    .card h3 {
+      margin: 0 0 0.65rem;
+      font-size: 0.95rem;
+      color: var(--brand-navy);
+    }
+
+    .card ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      font-size: 0.82rem;
+    }
+
+    .card li {
+      padding: 0.35rem 0;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .card li:last-child { border-bottom: none; }
+
+    .card a {
+      color: var(--link-blue);
+      text-decoration: none;
+    }
+
+    .card a:hover { text-decoration: underline; }
+
+    .host {
+      display: block;
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-top: 0.15rem;
+    }
+
+    .local-files {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.5rem;
+    }
+
+    .local-file {
+      font-size: 0.78rem;
+      padding: 0.5rem 0.65rem;
+      background: var(--card);
+      border: 1px dashed var(--border);
+      border-radius: 6px;
+      font-family: ui-monospace, monospace;
+    }
+
+    .local-file strong {
+      display: block;
+      font-family: inherit;
+      color: var(--brand-navy);
+      margin-bottom: 0.2rem;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--muted);
+      padding: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <header class="page-header">
+    <h1>HTHK Intranet — Visual Site Architecture</h1>
+    <p>
+      Derived from local snapshot:
+      <code>HTHK Intranet.html</code> (originally <code>http://192.168.204.63/</code>).
+      Only the frameset shell and two frame pages are in the download; linked subsites live on the server.
+    </p>
+    <div class="meta">
+      <span class="pill">Microsoft FrontPage 6.0</span>
+      <span class="pill">Frameset portal</span>
+      <span class="pill">Big5 / table layout</span>
+      <span class="pill">Multi-host (ntiis01 · 192.168.204.63 · finweb)</span>
+    </div>
+  </header>
+
+  <main>
+    <div class="legend">
+      <span><span class="swatch" style="background: var(--frame-header)"></span> Header frame</span>
+      <span><span class="swatch" style="background: var(--frame-main)"></span> Main frame</span>
+      <span><span class="swatch" style="background: var(--brand-navy)"></span> Dept nav → loads in <code>main</code></span>
+      <span><span class="swatch" style="background: #2d5a27"></span> finweb.hthk.com</span>
+      <span><span class="swatch" style="background: #8a93a8"></span> Label only (no link)</span>
+    </div>
+
+    <section aria-labelledby="frames-title">
+      <h2 id="frames-title">1. Page shell (frameset)</h2>
+      <div class="frameset">
+        <div class="frameset-title">HTHK Intranet.html — &lt;frameset rows="184,*"&gt;</div>
+
+        <div class="frame-row">
+          <div class="frame-label">Frame: header · scrolling=no · target→main</div>
+          <div class="frame-header-block">
+            <span class="file-tag">HTHK Intranet_files/menu_top.html</span>
+            <p style="margin:0 0 0.5rem;font-size:0.8rem;">Logo, utility links, department launcher (2×4 grid)</p>
+            <div class="nav-grid">
+              <div class="nav-item disabled">Customer Services</div>
+              <div class="nav-item external-host">Finance &amp; Admin</div>
+              <div class="nav-item">Human Resources</div>
+              <div class="nav-item">Legal &amp; Regulatory</div>
+              <div class="nav-item">HTHK IT</div>
+              <div class="nav-item">Sales &amp; Marketing</div>
+              <div class="nav-item external-host">Sustainability</div>
+              <div class="nav-item external-host">Policy Portal</div>
+            </div>
+            <p style="margin:0.65rem 0 0;font-size:0.72rem;color:var(--muted);">
+              Utilities: Home (ntiis01) · Site Map (text) · Data Privacy · Directory · three.com.hk
+            </p>
+          </div>
+        </div>
+
+        <div class="frame-row">
+          <div class="frame-label">Frame: main · scrolling=auto · base target=_blank</div>
+          <div class="frame-main-block">
+            <span class="file-tag">HTHK Intranet_files/menu_right.html</span>
+            <span class="file-tag" style="margin-left:0.35rem;">live: menu_right.asp</span>
+            <div class="main-zones">
+              <div>
+                <div class="zone" style="margin-bottom:0.5rem;">
+                  <h3>Top quick links</h3>
+                  <ul>
+                    <li>Staff Activities · Shuttle Bus · Staff Cafeteria · SPHERE</li>
+                    <li>Jetso Corner · Telecom Glossary · ISO · JOMEH</li>
+                  </ul>
+                </div>
+                <div class="zone">
+                  <h3>What's Hot (static announcements)</h3>
+                  <ul>
+                    <li>Staff offers / jetso → PDFs under <code>/newsletter/popitems/jetsoCorner/</code></li>
+                    <li>Oracle HCM go-live → SaaS + HR user guide</li>
+                    <li>Dated entries with owning department (HR, Marketing, Sustainability, …)</li>
+                  </ul>
+                </div>
+              </div>
+              <div>
+                <div class="zone" style="margin-bottom:0.5rem;">
+                  <h3>Online Applications</h3>
+                  <ul>
+                    <li>Password change · CKHH portal · CKHH directory</li>
+                    <li>IT e-requisition · HCM · Info distribution · Car booking</li>
+                  </ul>
+                </div>
+                <div class="zone">
+                  <h3>Popular Items</h3>
+                  <ul>
+                    <li>Useful info · Common forms · FAQ</li>
+                    <li>Panel doctors · HCM guide · Room booking</li>
+                    <li>Security / mobile email policies · First aiders · SSLVPN 2FA</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="arrow-note">
+          Department links in header use <strong>target="main"</strong> → replace lower frame.
+          Most homepage links use <strong>target="_blank"</strong> → new tab/window.
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="local-title">
+      <h2 id="local-title">2. Local bundle (your download)</h2>
+      <div class="local-files">
+        <div class="local-file"><strong>Entry</strong>HTHK Intranet.html</div>
+        <div class="local-file"><strong>Alt entry</strong>index.html</div>
+        <div class="local-file"><strong>Header</strong>menu_top.html + top.css</div>
+        <div class="local-file"><strong>Home</strong>menu_right.html + main.css</div>
+        <div class="local-file"><strong>Assets</strong>logos, arrows, GIF spacers</div>
+      </div>
+    </section>
+
+    <section aria-labelledby="server-title">
+      <h2 id="server-title">3. Inferred live server tree (192.168.204.63)</h2>
+      <div class="path-tree">
+        <span class="root">/</span> <span class="note">← frameset homepage</span><br>
+        ├── menu_top.html<br>
+        ├── menu_right.asp<br>
+        ├── <span class="folder">hr/hrd/</span> <span class="note">HR portal (ASP, Pages/, forms, benefits)</span><br>
+        ├── <span class="folder">itd/</span> <span class="note">IT dept + jomeh/</span><br>
+        ├── <span class="folder">Legal-intranet/</span><br>
+        ├── <span class="folder">salesmarketing/</span><br>
+        ├── <span class="folder">newsletter/</span> <span class="note">shuttle, jetso, cafeteria, room booking</span><br>
+        ├── <span class="folder">popitems/</span> <span class="note">usefulinfo, commonform, mobile/security docs</span><br>
+        ├── <span class="folder">cs/</span> <span class="note">e.g. Gen FAQ.xls</span><br>
+        └── <span class="folder">admin/iso/</span>
+      </div>
+    </section>
+
+    <section aria-labelledby="dept-title">
+      <h2 id="dept-title">4. Department portals (header navigation)</h2>
+      <div class="cards">
+        <div class="card server">
+          <h3>On 192.168.204.63</h3>
+          <ul>
+            <li>Human Resources<br><span class="host">/hr/hrd/index_content.asp</span></li>
+            <li>Legal &amp; Regulatory<br><span class="host">/Legal-intranet/index-legal.html</span></li>
+            <li>HTHK IT<br><span class="host">/itd/index_content.htm</span></li>
+            <li>Sales &amp; Marketing<br><span class="host">/salesmarketing/index_content.html</span></li>
+          </ul>
+        </div>
+        <div class="card external">
+          <h3>On finweb.hthk.com</h3>
+          <ul>
+            <li>Finance &amp; Admin<br><span class="host">/fin/index.asp</span></li>
+            <li>Sustainability<br><span class="host">/sustainability/index.html</span></li>
+            <li>Policy Portal<br><span class="host">/policy/</span></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Legacy / global utilities</h3>
+          <ul>
+            <li>Home (alternate host)<br><span class="host">http://ntiis01/default.htm</span></li>
+            <li>Data Privacy<br><span class="host">ntiis01/cs/cc/index.htm → frame main</span></li>
+            <li>HWL Group Directory<br><span class="host">/hr/hrd/Pages/hwld/…</span></li>
+            <li>Customer Services<br><span class="host">No href in snapshot</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="integrations-title">
+      <h2 id="integrations-title">5. External &amp; integrated systems</h2>
+      <div class="cards">
+        <div class="card external">
+          <h3>CK Hutchison group</h3>
+          <ul>
+            <li>Employee Information Portal — employee.ckh.com.hk</li>
+            <li>CKHH Directory — directory.ckh.com.hk</li>
+            <li>SPHERE journal — ckh.com.hk</li>
+          </ul>
+        </div>
+        <div class="card external">
+          <h3>SaaS &amp; ops</h3>
+          <ul>
+            <li>Oracle HCM — fa-ercj-saasfaprod1.fa.ocs.oraclecloud.com</li>
+            <li>Car booking — rms.three.com.hk/carbking</li>
+            <li>HR bot (hidden link in source) — hr-bot-crm.apps.ocpprd.three.com.hk</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Internal shortcuts &amp; IPs</h3>
+          <ul>
+            <li>HTHK Password — http://password/iisadmpwd</li>
+            <li>IT E-Requisition — http://itereq/pcds/</li>
+            <li>Information Distribution — 172.25.14.83/iids/</li>
+            <li>Info Security Forum — hgcmoss.hthk.com (SharePoint-style)</li>
+            <li>Staff suggestion — mailto:staff.suggestion@hthk.com</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Generated from HTHK Intranet local snapshot · Open this file in any browser
+  </footer>
+</body>
+</html>
