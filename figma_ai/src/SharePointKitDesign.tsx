@@ -1,4 +1,12 @@
-import { FormEvent, useEffect, useLayoutEffect, useRef, useState } from "react"
+import {
+  type CSSProperties,
+  FormEvent,
+  type MouseEvent,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react"
 
 const GUIDE_SECTION_SELECTORS: { n: number; sel: string }[] = [
   { n: 1, sel: ".kit-suite" },
@@ -560,13 +568,412 @@ function KitNewsHubView({ route }: { route: Exclude<NewsRoute, "home"> }) {
   )
 }
 
+const KIT3_JOMEH_VIDEOS: [string, string, string][] = [
+  [
+    "AI Takes the Lead EP5 – Intelligent customer service transformation",
+    "/assets/jomeh/ep5.png",
+    "#jomeh-ep5",
+  ],
+  [
+    "iPhone Duo first-day pick-up party",
+    "/assets/jomeh/iphone-duo.png",
+    "#jomeh-iphone-duo",
+  ],
+  [
+    "AI Takes the Lead EP4 – Network AI Part 2",
+    "/assets/jomeh/ep4.png",
+    "#jomeh-ep4",
+  ],
+  [
+    "AI Takes the Lead EP3 – Network AI Part 1",
+    "/assets/jomeh/ep3.png",
+    "#jomeh-ep3",
+  ],
+  [
+    "AI Takes the Lead EP2 – Innovation at scale (demo)",
+    "/assets/jomeh/ep2-demo.png",
+    "#jomeh-ep2",
+  ],
+]
+
+function Kit3JomehVideos() {
+  const railRef = useRef<HTMLUListElement>(null)
+  const jomehPointerRef = useRef<{
+    active: boolean
+    isMouse: boolean
+    startX: number
+    startScroll: number
+    moved: boolean
+  }>({ active: false, isMouse: false, startX: 0, startScroll: 0, moved: false })
+  const jomehTouchRef = useRef<{ startX: number; startY: number } | null>(null)
+
+  const scrollRailStep = () => {
+    const rail = railRef.current
+    if (!rail) return 254
+    const firstCard = rail.querySelector("li")
+    const cardWidth = firstCard?.getBoundingClientRect().width ?? 240
+    return cardWidth + 14
+  }
+
+  const scrollRailNext = () => {
+    railRef.current?.scrollBy({ left: scrollRailStep(), behavior: "smooth" })
+  }
+
+  const scrollRailPrev = () => {
+    railRef.current?.scrollBy({ left: -scrollRailStep(), behavior: "smooth" })
+  }
+
+  const onJomehPointerDown = (
+    clientX: number,
+    pointerId: number,
+    pointerType: string,
+  ) => {
+    const rail = railRef.current
+    if (!rail || pointerType !== "mouse") return
+    jomehPointerRef.current = {
+      active: true,
+      isMouse: true,
+      startX: clientX,
+      startScroll: rail.scrollLeft,
+      moved: false,
+    }
+    rail.classList.add("is-dragging")
+    rail.setPointerCapture(pointerId)
+  }
+
+  const onJomehPointerMove = (clientX: number) => {
+    const rail = railRef.current
+    const state = jomehPointerRef.current
+    if (!rail || !state.active || !state.isMouse) return
+    const delta = clientX - state.startX
+    if (Math.abs(delta) > 6) state.moved = true
+    rail.scrollLeft = state.startScroll - delta
+  }
+
+  const endJomehPointer = (pointerId: number) => {
+    const rail = railRef.current
+    const state = jomehPointerRef.current
+    if (!rail || !state.active) return
+    state.active = false
+    rail.classList.remove("is-dragging")
+    rail.releasePointerCapture(pointerId)
+  }
+
+  const onJomehTouchStart = (clientX: number, clientY: number) => {
+    jomehTouchRef.current = { startX: clientX, startY: clientY }
+  }
+
+  const onJomehTouchEnd = (clientX: number, clientY: number) => {
+    const start = jomehTouchRef.current
+    jomehTouchRef.current = null
+    if (!start || jomehPointerRef.current.moved) return
+    const deltaX = clientX - start.startX
+    const deltaY = clientY - start.startY
+    if (Math.abs(deltaX) < 48 || Math.abs(deltaX) < Math.abs(deltaY)) return
+    if (deltaX > 0) scrollRailPrev()
+    else scrollRailNext()
+  }
+
+  const onJomehRailClickCapture = (event: MouseEvent) => {
+    if (jomehPointerRef.current.moved) {
+      event.preventDefault()
+      event.stopPropagation()
+      jomehPointerRef.current.moved = false
+    }
+  }
+
+  return (
+    <section
+      className="kit-content kit3-jomeh"
+      aria-labelledby="kit3-jomeh-videos"
+    >
+      <h2 id="kit3-jomeh-videos" className="sr-only">
+        JoMeh videos
+      </h2>
+      <div className="kit3-jomeh__panel">
+        <aside className="kit3-jomeh__aside">
+          <img
+            className="kit3-jomeh__logo"
+            src="/assets/jomeh-logo.png"
+            width={120}
+            height={40}
+            alt="JoMeh"
+          />
+          <p className="kit3-jomeh__label">
+            <span lang="zh-Hant">新片</span> New
+          </p>
+          <a className="kit3-jomeh__more" href="#jomeh-all">
+            See all
+          </a>
+        </aside>
+        <div className="kit3-jomeh__rail-wrap">
+          <ul
+            className="kit3-jomeh__rail"
+            role="list"
+            ref={railRef}
+            onClickCapture={onJomehRailClickCapture}
+            onPointerDown={(e) => {
+              if (e.button !== 0) return
+              onJomehPointerDown(e.clientX, e.pointerId, e.pointerType)
+            }}
+            onPointerMove={(e) => onJomehPointerMove(e.clientX)}
+            onPointerUp={(e) => endJomehPointer(e.pointerId)}
+            onPointerCancel={(e) => endJomehPointer(e.pointerId)}
+            onTouchStart={(e) => {
+              const t = e.touches[0]
+              if (t) onJomehTouchStart(t.clientX, t.clientY)
+            }}
+            onTouchEnd={(e) => {
+              const t = e.changedTouches[0]
+              if (t) onJomehTouchEnd(t.clientX, t.clientY)
+            }}
+          >
+            {KIT3_JOMEH_VIDEOS.map(([title, thumb, href]) => (
+              <li key={href}>
+                <a className="kit3-jomeh__card" href={href}>
+                  <span className="kit3-jomeh__thumb">
+                    <img
+                      src={thumb}
+                      alt=""
+                      width={320}
+                      height={180}
+                      loading="lazy"
+                    />
+                  </span>
+                  <span className="kit3-jomeh__card-title">{title}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+          <button
+            type="button"
+            className="kit3-jomeh__scroll-hint kit3-jomeh__scroll-hint--prev"
+            aria-label="Scroll to previous JoMeh videos"
+            onClick={scrollRailPrev}
+          >
+            <KIcon name="chevron" size={20} />
+          </button>
+          <button
+            type="button"
+            className="kit3-jomeh__scroll-hint kit3-jomeh__scroll-hint--next"
+            aria-label="Scroll to next JoMeh videos"
+            onClick={scrollRailNext}
+          >
+            <KIcon name="chevron" size={20} />
+          </button>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function Kit3GroupContent() {
+  const brands = [
+    "HTHK",
+    "3",
+    "CK Hutchison",
+    "Hutchison Telecom",
+    "A.S. Watson Group",
+  ]
+
+  return (
+    <div className="kit3-group" id="kit3-group-content">
+      <section className="kit-content kit3-group-header">
+        <div className="kit-section-title">
+          <div>
+            <p className="kit-topic">CK Hutchison group</p>
+            <h2 id="kit3-group-heading">Group &amp; corporate</h2>
+            <p>
+              Leadership updates, group systems and public corporate
+              information—alongside your HTHK homepage above.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="kit3-corporate" aria-labelledby="kit3-corporate">
+        <div className="kit-content">
+        <div className="kit3-corporate__card">
+          <div>
+            <p className="kit-topic">Public corporate site</p>
+            <h3 id="kit3-corporate">Corporate information</h3>
+            <p>
+              Sustainability, investor news and group-wide stories on the public
+              HTHK site—separate from day-to-day staff tools above.
+            </p>
+          </div>
+          <a
+            className="kit-button kit-button--outline"
+            href="https://www.hthkh.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Visit hthkh.com
+            <KIcon name="chevron" size={16} />
+          </a>
+        </div>
+        </div>
+      </section>
+
+      <section className="kit3-leadership" aria-label="Leadership and group comms">
+        <div className="kit-content kit3-leadership__layout">
+        <div className="kit3-leadership__main">
+          <div className="kit-section-title">
+            <div>
+              <p className="kit-topic">Leadership</p>
+              <h2>CEO bi-weekly column</h2>
+              <p>Messages from group leadership, published every two weeks.</p>
+            </div>
+            <a href="#ceo-columns">All columns →</a>
+          </div>
+          <div className="kit3-ceo-list">
+            {[
+              [
+                "5 November 2026",
+                "Customer first, network resilience and our people",
+              ],
+              [
+                "22 October 2026",
+                "Quarter in review and priorities through year-end",
+              ],
+            ].map(([date, title]) => (
+              <a className="kit3-ceo-list__item" href={`#ceo-${date}`} key={date}>
+                <time>{date}</time>
+                <span>{title}</span>
+                <KIcon name="chevron" size={16} />
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <aside className="kit3-leadership__aside">
+          <article className="kit3-panel">
+            <p className="kit-topic">Staff newsletter</p>
+            <h3>3Pulse</h3>
+            <p>
+              Group stories, colleague offers and team updates in one newsletter.
+            </p>
+            <a href="#3pulse-latest">Read latest issue →</a>
+          </article>
+        </aside>
+        </div>
+      </section>
+
+      <section
+        className="kit-announcements kit-content kit3-spotlight"
+        aria-labelledby="kit3-people"
+      >
+        <div className="kit-section-title">
+          <div>
+            <p className="kit-topic">People · HR-approved content</p>
+            <h2 id="kit3-people">People spotlight</h2>
+            <p>New joiners and staff achievements across HTHK.</p>
+          </div>
+          <a href="#people-spotlight">See all →</a>
+        </div>
+        <div className="kit-announcement-grid kit-announcement-grid--pair">
+          <article>
+            <MockupImage variant="people" label="" />
+            <div className="kit-announcement-body">
+              <div>
+                <span>New joiner</span>
+                <time>Today</time>
+              </div>
+              <h3>Welcome, Analytics &amp; AI team</h3>
+              <p>
+                Five colleagues joined this month—connect on Teams and review
+                onboarding resources.
+              </p>
+              <a href="#welcome-analytics">View welcome pack →</a>
+            </div>
+          </article>
+          <article>
+            <MockupImage variant="event" label="" />
+            <div className="kit-announcement-body">
+              <div>
+                <span>Achievement</span>
+                <time>15 Nov</time>
+              </div>
+              <h3>Customer care excellence award</h3>
+              <p>
+                Recognising frontline teams for outstanding service in Q3—nominate
+                a colleague for the next round.
+              </p>
+              <a href="#care-award">Read more →</a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section className="kit-departments kit-content kit3-ckh" aria-labelledby="kit3-ckh">
+        <div className="kit-section-title">
+          <div>
+            <p className="kit-topic">CK Hutchison</p>
+            <h2 id="kit3-ckh">Group systems</h2>
+            <p>Applications and directories shared across the group.</p>
+          </div>
+        </div>
+        <div>
+          {[
+            [
+              "CKH Employee Portal",
+              "HR, policies and group-wide employee services",
+              "#007bc7",
+            ],
+            [
+              "eSphere",
+              "Collaboration, documents and group applications",
+              "#007ead",
+            ],
+            [
+              "CKH directory",
+              "Find colleagues across the group (as provisioned)",
+              "#012d90",
+            ],
+          ].map(([name, description, accent]) => (
+            <a
+              href={`#${newsTopicSlug(name)}`}
+              key={name}
+              style={{ "--kit-accent": accent } as CSSProperties}
+            >
+              <strong>{name}</strong>
+              <small>{description}</small>
+              <span>Open →</span>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <Kit3JomehVideos />
+
+      <section className="kit3-brands-strip" aria-labelledby="kit3-brands-title">
+        <div className="kit-content">
+          <h2 id="kit3-brands-title" className="kit3-brands-strip__label">
+            Our group brands
+          </h2>
+          <ul className="kit3-brands-strip__list">
+            {brands.map((brand) => (
+              <li key={brand}>
+                <a href={`#brand-${newsTopicSlug(brand)}`}>{brand}</a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    </div>
+  )
+}
+
 type SharePointKitDesignProps = {
   /** SharePoint Kit 2: same 5-tile hero as Kit 1, full width (no 1204px cap) */
   heroFullWidth?: boolean
+  /** SharePoint Kit 3: CKH / group content bands from intranet requirements */
+  kit3Bands?: boolean
 }
 
 export default function SharePointKitDesign({
   heroFullWidth = false,
+  kit3Bands = false,
 }: SharePointKitDesignProps) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [query, setQuery] = useState("")
@@ -958,6 +1365,8 @@ export default function SharePointKitDesign({
             </div>
           </section>
 
+          {kit3Bands && <Kit3GroupContent />}
+
           <section className="kit-app-download kit-content">
             <div className="kit-app-download__copy">
               <p className="kit-topic">HTHK Mobile</p>
@@ -996,37 +1405,14 @@ export default function SharePointKitDesign({
               className="kit-phone-preview"
               aria-label="HTHK mobile intranet app preview"
             >
-              <div className="kit-phone">
-                <span className="kit-phone__speaker" />
-                <div className="kit-phone__screen">
-                  <div className="kit-phone__brand">
-                    <span className="brand-mark" aria-hidden="true">
-                      <i />
-                      <i />
-                      <i />
-                      <i />
-                    </span>
-                    <strong>HTHK</strong>
-                  </div>
-                  <p>Good morning, Alex</p>
-                  <h3>What do you need today?</h3>
-                  <div className="kit-phone__search">
-                    <KIcon name="search" size={15} />
-                    Ask HTHK AI
-                  </div>
-                  <div className="kit-phone__tiles">
-                    <span>My roster</span>
-                    <span>Staff offers</span>
-                    <span>Forms</span>
-                    <span>News</span>
-                  </div>
-                  <div className="kit-phone__notice">
-                    <b>NEW</b>
-                    <strong>Xtra Mall staff offers</strong>
-                    <small>View this month’s savings</small>
-                  </div>
-                </div>
-              </div>
+              <div className="kit-phone-preview__cluster">
+              <img
+                className="kit-phone-preview__device"
+                src="/assets/hthk-mobile-app-screen.png"
+                width={280}
+                height={520}
+                alt="Mobile app home screen reference: account summary, quick actions, and promotional carousel"
+              />
               <div className="kit-qr" aria-label="QR code placeholder">
                 <svg viewBox="0 0 84 84" aria-hidden="true">
                   <path
@@ -1035,6 +1421,7 @@ export default function SharePointKitDesign({
                   />
                 </svg>
                 <span>Scan to download</span>
+              </div>
               </div>
             </div>
           </section>

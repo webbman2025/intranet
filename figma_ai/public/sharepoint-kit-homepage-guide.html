@@ -349,8 +349,8 @@
     <h1>SharePoint Kit 2 — Homepage layout guide</h1>
     <p>
       What each band is for, why it sits where it does, and how it maps to the legacy HTHK intranet
-      and Modern SharePoint building blocks. Bundled mock in this
-      <code>hthk_intranet/</code> folder (SharePoint Kit 2 · full-width hero).
+      and Modern SharePoint building blocks. Use with the live mock in <code>figma_ai/</code>
+      (SharePoint Kit 2 · full-width hero).
     </p>
     <div class="meta">
       <span class="pill">Audience: product, comms, SharePoint dev</span>
@@ -358,8 +358,9 @@
       <span class="pill">Mobile: hero carousel · horizontal app tiles</span>
     </div>
     <p style="margin-top: 1rem; font-size: 0.85rem;">
-      Centre panel: <strong>live SharePoint Kit 2 mock</strong> from
-      <code>index.html</code> in this folder (serve over http/https, not file://).
+      Centre panel: <strong>live SharePoint Kit 2 mock</strong> (scroll, search, hero carousel on narrow widths).
+      Requires <code>npm run dev:local</code> in <code>figma_ai/</code>, or a built copy at
+      <code>figma_ai/dist/</code>.
     </p>
   </header>
 
@@ -477,8 +478,8 @@
             ></iframe>
             <div id="preview-fallback" class="preview-fallback">
               <p><strong>Mock could not load.</strong></p>
-              <p>Ensure <code>index.html</code> is in the same folder and this page is opened via your UAT web server.</p>
-              <p>Direct link: <code>index.html?design=kit2&amp;embed=1&amp;guide=1</code></p>
+              <p>Start the dev server: <code>cd figma_ai &amp;&amp; npm run dev:local</code></p>
+              <p>Or build static files: <code>npm run build</code>, then reload this page.</p>
               <p><button type="button" id="preview-retry">Try again</button></p>
             </div>
             <ol class="preview-markers" aria-label="Section numbers on homepage">
@@ -504,7 +505,7 @@
           Embedded mock with <strong>numbered pins</strong> aligned to each section (updates on resize).
           Pins jump to side notes; scroll inside the panel to explore the full page.
           Open in a tab:
-          <a href="./index.html?design=kit2&amp;embed=1" target="_blank" rel="noopener">open mock</a>.
+          <a href="http://localhost:5173/?design=kit2&amp;embed=1" target="_blank" rel="noopener">live mock</a>.
         </figcaption>
       </figure>
 
@@ -628,11 +629,12 @@
   <footer class="doc-footer">
     HTHK Intranet revamp · SharePoint Kit 2 homepage guide ·
     Open <code>sharepoint-kit-homepage-guide.html</code> in a browser ·
-    UAT package · <code>hthk_intranet/</code>
+    Prototype source: <code>figma_ai/src/SharePointKitDesign.tsx</code>
   </footer>
   <script>
     (function () {
-      var MOCK_SRC = "./index.html?design=kit2&embed=1&guide=1";
+      var DEV_SRC = "http://127.0.0.1:5173/?design=kit2&embed=1&guide=1";
+      var DIST_SRC = "./figma_ai/dist/index.html?design=kit2&embed=1&guide=1";
       var iframe = document.getElementById("kit-preview-frame");
       var canvas = document.getElementById("preview-canvas");
       var fallback = document.getElementById("preview-fallback");
@@ -672,6 +674,10 @@
         if (loadTimer) window.clearTimeout(loadTimer);
         loadTimer = window.setTimeout(function () {
           if (gotMetrics) return;
+          if (stage === "dev") {
+            loadMock(DIST_SRC, "dist");
+            return;
+          }
           iframe.style.display = "none";
           fallback.style.display = "block";
           canvas.classList.remove("is-loading");
@@ -680,10 +686,14 @@
       }
 
       document.getElementById("preview-retry").addEventListener("click", function () {
-        loadMock(MOCK_SRC, "dist");
+        loadMock(DEV_SRC, "dev");
       });
 
-      loadMock(MOCK_SRC, "dist");
+      if (window.location.protocol === "file:") {
+        loadMock(DIST_SRC, "dist");
+      } else {
+        loadMock(DEV_SRC, "dev");
+      }
     })();
   </script>
 </body>

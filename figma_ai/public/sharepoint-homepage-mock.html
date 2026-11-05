@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HTHK Intranet — SharePoint Homepage (UX Mock)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --sp-body: #faf9f8;
+      --sp-surface: #ffffff;
+      --sp-border: #edebe9;
+      --sp-text: #323130;
+      --sp-text-secondary: #605e5c;
+      --sp-theme: #012d90;
+      --sp-theme-hover: #0141c4;
+      --sp-accent: #ff6600;
+      --sp-accent-soft: #fff4eb;
+      --sp-link: #082ebd;
+      --sp-header-bg: #012d90;
+      --sp-radius: 4px;
+      --sp-shadow: 0 1.6px 3.6px rgba(0,0,0,.13), 0 0.3px 0.9px rgba(0,0,0,.11);
+      --max: 1280px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--sp-body);
+      color: var(--sp-text);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* M365 suite bar (simplified) */
+    .suite-bar {
+      background: #000;
+      color: #fff;
+      font-size: 12px;
+      padding: 0 16px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .suite-bar .waffle {
+      width: 20px; height: 20px;
+      display: grid;
+      grid-template: repeat(3,1fr) / repeat(3,1fr);
+      gap: 2px;
+      margin-right: 12px;
+    }
+    .suite-bar .waffle span { background: #fff; border-radius: 1px; }
+    .suite-left { display: flex; align-items: center; }
+    .suite-right { opacity: 0.85; }
+
+    /* SharePoint site header */
+    .sp-header {
+      background: var(--sp-surface);
+      border-bottom: 1px solid var(--sp-border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .sp-header-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 12px 24px 0;
+    }
+    .site-title-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .site-logo img {
+      height: 40px;
+      width: auto;
+      display: block;
+    }
+    .site-title-block h1 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--sp-theme);
+    }
+    .site-title-block p {
+      margin: 2px 0 0;
+      font-size: 12px;
+      color: var(--sp-text-secondary);
+    }
+    .sp-search {
+      flex: 1;
+      min-width: 200px;
+      max-width: 420px;
+      margin-left: auto;
+    }
+    .sp-search input {
+      width: 100%;
+      padding: 8px 12px 8px 36px;
+      border: 1px solid var(--sp-border);
+      border-radius: var(--sp-radius);
+      font-size: 14px;
+      background: var(--sp-body) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23605e5c'%3E%3Cpath d='M11.5 10h-.79l-.28-.27A4.47 4.47 0 0012 6.5 4.5 4.5 0 108.5 11c1.1 0 2.1-.4 2.87-1.07l.27.28v.79l3 3 1.5-1.5-3-3zm-3 0C7.01 10 5 7.99 5 5.5S7.01 1 9.5 1 14 3.01 14 5.5 11.99 10 9.5 10z'/%3E%3C/svg%3E") 10px center no-repeat;
+    }
+    .sp-search input:focus {
+      outline: 2px solid var(--sp-theme);
+      border-color: transparent;
+    }
+
+    /* Hub horizontal nav — replaces frameset dept bar */
+    .hub-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      padding-bottom: 0;
+      border-bottom: 2px solid transparent;
+    }
+    .hub-nav a {
+      display: block;
+      padding: 10px 14px;
+      text-decoration: none;
+      color: var(--sp-text);
+      font-weight: 600;
+      font-size: 13px;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+    }
+    .hub-nav a:hover {
+      color: var(--sp-theme);
+      background: rgba(1, 45, 144, 0.04);
+    }
+    .hub-nav a.active {
+      color: var(--sp-theme);
+      border-bottom-color: var(--sp-accent);
+    }
+    .hub-nav a.disabled {
+      color: #a19f9d;
+      pointer-events: none;
+      font-weight: 400;
+    }
+    .utility-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 16px;
+      padding: 8px 24px 12px;
+      max-width: var(--max);
+      margin: 0 auto;
+      font-size: 12px;
+      border-top: 1px solid var(--sp-border);
+      background: #f3f2f1;
+    }
+    .utility-links a {
+      color: var(--sp-link);
+      text-decoration: none;
+    }
+    .utility-links a.highlight { color: var(--sp-accent); font-weight: 600; }
+
+    /* Page canvas */
+    .page-canvas {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .webpart-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #8764b8;
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .webpart-label::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      background: #8764b8;
+      border-radius: 50%;
+    }
+
+    /* Hero */
+    .hero {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; }
+    }
+    .hero-main {
+      background: linear-gradient(135deg, var(--sp-header-bg) 0%, #1a4bb8 55%, #0d3a8c 100%);
+      color: #fff;
+      border-radius: 8px;
+      padding: 28px 32px;
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      box-shadow: var(--sp-shadow);
+    }
+    .hero-main .eyebrow {
+      font-size: 12px;
+      opacity: 0.9;
+      margin-bottom: 8px;
+    }
+    .hero-main h2 {
+      margin: 0 0 12px;
+      font-size: 26px;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+    .hero-main p {
+      margin: 0 0 20px;
+      opacity: 0.92;
+      max-width: 36em;
+    }
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--sp-accent);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: var(--sp-radius);
+      text-decoration: none;
+      font-weight: 600;
+      width: fit-content;
+    }
+    .hero-cta:hover { filter: brightness(1.05); }
+
+    .hero-tiles {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .hero-tile {
+      background: var(--sp-surface);
+      border: 1px solid var(--sp-border);
+      border-radius: 8px;
+      padding: 16px;
+      text-decoration: none;
+      color: inherit;
+      transition: box-shadow 0.15s, border-color 0.15s;
+      box-shadow: var(--sp-shadow);
+    }
+    .hero-tile:hover {
+      border-color: var(--sp-theme);
+      box-shadow: 0 4px 12px rgba(1,45,144,0.12);
+    }
+    .hero-tile strong {
+      display: block;
+      font-size: 13px;
+      color: var(--sp-theme);
+      margin-bottom: 4px;
+    }
+    .hero-tile span {
+      font-size: 12px;
+      color: var(--sp-text-secondary);
+    }
+    .badge-new {
+      display: inline-block;
+      background: var(--sp-accent);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 2px;
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+
+    /* Staff essentials — Quick links row */
+    .essentials {
+      background: var(--sp-surface);
+      border: 1px solid var(--sp-border);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      box-shadow: var(--sp-shadow);
+    }
+    .essentials h3 {
+      margin: 0 0 12px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      background: var(--sp-body);
+      border: 1px solid var(--sp-border);
+      border-radius: 999px;
+      text-decoration: none;
+      color: var(--sp-text);
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .chip:hover {
+      background: var(--sp-accent-soft);
+      border-color: var(--sp-accent);
+      color: #8a3d00;
+    }
+
+    /* Two-column main */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 24px;
+      align-items: start;
+    }
+    @media (max-width: 960px) {
+      .main-grid { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: var(--sp-surface);
+      border: 1px solid var(--sp-border);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 24px;
+      box-shadow: var(--sp-shadow);
+    }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .panel-header h3 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .panel-header a {
+      font-size: 13px;
+      color: var(--sp-link);
+      text-decoration: none;
+    }
+
+    /* News cards — replaces What's Hot cyan box */
+    .news-list { list-style: none; margin: 0; padding: 0; }
+    .news-item {
+      padding: 16px 0;
+      border-bottom: 1px solid var(--sp-border);
+    }
+    .news-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .news-item:first-child { padding-top: 0; }
+    .news-meta {
+      font-size: 12px;
+      color: #107c10;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .news-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--sp-text);
+      margin-bottom: 6px;
+    }
+    .news-title a {
+      color: inherit;
+      text-decoration: none;
+    }
+    .news-title a:hover { color: var(--sp-link); text-decoration: underline; }
+    .news-dept {
+      font-size: 12px;
+      color: var(--sp-text-secondary);
+      font-style: italic;
+    }
+
+    /* Quick links columns */
+    .quick-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 16px;
+    }
+    @media (max-width: 500px) {
+      .quick-grid { grid-template-columns: 1fr; }
+    }
+    .quick-link {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px;
+      border-radius: var(--sp-radius);
+      text-decoration: none;
+      color: var(--sp-text);
+    }
+    .quick-link:hover { background: var(--sp-body); }
+    .quick-icon {
+      width: 32px;
+      height: 32px;
+      background: rgba(1, 45, 144, 0.08);
+      border-radius: var(--sp-radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+      color: var(--sp-theme);
+      font-weight: 700;
+    }
+    .quick-link span {
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.35;
+    }
+
+    /* Dept hub cards */
+    .dept-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 12px;
+    }
+    .dept-card {
+      text-align: center;
+      padding: 16px 12px;
+      border: 1px solid var(--sp-border);
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--sp-text);
+      background: var(--sp-body);
+    }
+    .dept-card:hover {
+      border-color: var(--sp-theme);
+      background: #fff;
+    }
+    .dept-card .icon {
+      width: 40px;
+      height: 40px;
+      margin: 0 auto 8px;
+      background: var(--sp-theme);
+      color: #fff;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .dept-card span {
+      font-size: 12px;
+      font-weight: 600;
+      display: block;
+      line-height: 1.3;
+    }
+
+    /* UX spec drawer */
+    .spec-toggle {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 200;
+      background: var(--sp-theme);
+      color: #fff;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(1,45,144,0.35);
+    }
+    .spec-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: min(400px, 100vw);
+      height: 100vh;
+      background: #fff;
+      border-left: 1px solid var(--sp-border);
+      box-shadow: -8px 0 24px rgba(0,0,0,0.1);
+      z-index: 199;
+      transform: translateX(100%);
+      transition: transform 0.25s ease;
+      overflow-y: auto;
+      padding: 24px;
+    }
+    .spec-panel.open { transform: translateX(0); }
+    .spec-panel h2 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      color: var(--sp-theme);
+    }
+    .spec-panel .subtitle {
+      font-size: 12px;
+      color: var(--sp-text-secondary);
+      margin-bottom: 20px;
+    }
+    .spec-panel h4 {
+      margin: 16px 0 8px;
+      font-size: 13px;
+      color: var(--sp-accent);
+    }
+    .spec-panel ul {
+      margin: 0;
+      padding-left: 18px;
+      font-size: 13px;
+    }
+    .spec-panel li { margin-bottom: 6px; }
+    .spec-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.3);
+      z-index: 198;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+    }
+    .spec-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .mock-banner {
+      background: #fff4ce;
+      border-bottom: 1px solid #fde7a0;
+      padding: 8px 24px;
+      font-size: 12px;
+      text-align: center;
+      color: #323130;
+    }
+  </style>
+</head>
+<body>
+  <div class="mock-banner">
+    UX/UI mock for SharePoint Modern — maps legacy <code>menu_top</code> + <code>menu_right</code> to hub site + web parts. Not production UI.
+  </div>
+
+  <div class="suite-bar" aria-hidden="true">
+    <div class="suite-left">
+      <div class="waffle" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      <span>Microsoft 365</span>
+    </div>
+    <div class="suite-right">Contoso · Sign in as staff</div>
+  </div>
+
+  <header class="sp-header">
+    <div class="sp-header-inner">
+      <div class="site-title-row">
+        <div class="site-logo">
+          <img src="assets/logo5.jpg" alt="HTHK" width="150" height="40">
+        </div>
+        <div class="site-title-block">
+          <h1>HTHK Intranet</h1>
+          <p>Communication site · Hub home</p>
+        </div>
+        <div class="sp-search" role="search">
+          <label for="site-search" class="visually-hidden" style="position:absolute;clip:rect(0,0,0,0);">Search</label>
+          <input id="site-search" type="search" placeholder="Search people, news, policies, forms…" autocomplete="off">
+        </div>
+      </div>
+      <nav class="hub-nav" aria-label="Department hubs">
+        <a href="#" class="disabled" title="Link TBD — was label-only on legacy site">Customer Services</a>
+        <a href="#">Finance &amp; Admin</a>
+        <a href="#">Human Resources</a>
+        <a href="#">Legal &amp; Regulatory</a>
+        <a href="#">HTHK IT</a>
+        <a href="#">Sales &amp; Marketing</a>
+        <a href="#">Sustainability</a>
+        <a href="#">Policy Portal</a>
+        <a href="#" class="active" aria-current="page">Intranet Home</a>
+      </nav>
+    </div>
+    <div class="utility-links">
+      <a href="#">Data Privacy</a>
+      <a href="#" class="highlight">Staff Directory</a>
+      <a href="#">Site map</a>
+      <a href="#" class="highlight">Three.com.hk</a>
+      <span style="margin-left:auto;color:var(--sp-text-secondary)" id="today-date"></span>
+    </div>
+  </header>
+
+  <main class="page-canvas">
+    <section class="hero" aria-labelledby="hero-heading">
+      <div>
+        <p class="webpart-label">Hero web part</p>
+        <div class="hero-main">
+          <p class="eyebrow">Featured · Consumer Marketing</p>
+          <h2 id="hero-heading">Standalone Device Offer for Staff</h2>
+          <p>Latest staff offer — replaces manual “What’s Hot” hero entry. Rotate via SharePoint promoted news or Hero layout.</p>
+          <a class="hero-cta" href="#">View offer details</a>
+        </div>
+      </div>
+      <div>
+        <p class="webpart-label">Quick Links (2×2 compact)</p>
+        <div class="hero-tiles">
+          <a class="hero-tile" href="#">
+            <strong>Oracle HCM <span class="badge-new">Key app</span></strong>
+            <span>Login &amp; user guide</span>
+          </a>
+          <a class="hero-tile" href="#">
+            <strong>Password change</strong>
+            <span>HTHK account self-service</span>
+          </a>
+          <a class="hero-tile" href="#">
+            <strong>CKHH Employee Portal</strong>
+            <span>Group employee information</span>
+          </a>
+          <a class="hero-tile" href="#">
+            <strong>Car booking</strong>
+            <span>Three RMS</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="essentials" aria-labelledby="essentials-heading">
+      <p class="webpart-label">Highlighted content or Quick links — horizontal</p>
+      <h3 id="essentials-heading">Staff essentials</h3>
+      <div class="chip-row">
+        <a class="chip" href="#">Shuttle bus schedule</a>
+        <a class="chip" href="#">Staff cafeteria <span class="badge-new">New</span></a>
+        <a class="chip" href="#">Jetso Corner</a>
+        <a class="chip" href="#">Telecom glossary</a>
+        <a class="chip" href="#">ISO</a>
+        <a class="chip" href="#">JOMEH</a>
+        <a class="chip" href="#">SPHERE</a>
+        <a class="chip" href="#">Meeting room booking</a>
+      </div>
+    </section>
+
+    <div class="main-grid">
+      <div>
+        <section class="panel" aria-labelledby="news-heading">
+          <p class="webpart-label">News web part · List layout</p>
+          <div class="panel-header">
+            <h3 id="news-heading">What's hot</h3>
+            <a href="#">See all news</a>
+          </div>
+          <ul class="news-list">
+            <li class="news-item">
+              <div class="news-meta">28 Oct 2026</div>
+              <div class="news-title"><a href="#">Standalone Device Offer for Staff</a> <span class="badge-new">New</span></div>
+              <div class="news-dept">Consumer Marketing</div>
+            </li>
+            <li class="news-item">
+              <div class="news-meta">13 Oct 2026</div>
+              <div class="news-title"><a href="#">CKHH Staff Offer — healthESDlife</a> <span class="badge-new">New</span></div>
+              <div class="news-dept">Human Resources</div>
+            </li>
+            <li class="news-item">
+              <div class="news-meta">25 Sep 2026</div>
+              <div class="news-title"><a href="#">Offer from Cornerstone</a></div>
+              <div class="news-dept">Human Resources</div>
+            </li>
+            <li class="news-item">
+              <div class="news-meta">1 Aug 2025</div>
+              <div class="news-title"><a href="#">New HCM System — GO LIVE</a></div>
+              <div class="news-dept">Human Resources · links to Oracle SaaS</div>
+            </li>
+          </ul>
+        </section>
+
+        <section class="panel" aria-labelledby="dept-heading">
+          <p class="webpart-label">Hub navigation links or Button web part grid</p>
+          <div class="panel-header">
+            <h3 id="dept-heading">Department sites</h3>
+          </div>
+          <div class="dept-grid">
+            <a class="dept-card" href="#"><div class="icon">CS</div><span>Customer Services</span></a>
+            <a class="dept-card" href="#"><div class="icon">FIN</div><span>Finance &amp; Admin</span></a>
+            <a class="dept-card" href="#"><div class="icon">HR</div><span>Human Resources</span></a>
+            <a class="dept-card" href="#"><div class="icon">LEG</div><span>Legal &amp; Regulatory</span></a>
+            <a class="dept-card" href="#"><div class="icon">IT</div><span>HTHK IT</span></a>
+            <a class="dept-card" href="#"><div class="icon">S&amp;M</div><span>Sales &amp; Marketing</span></a>
+            <a class="dept-card" href="#"><div class="icon">ESG</div><span>Sustainability</span></a>
+            <a class="dept-card" href="#"><div class="icon">POL</div><span>Policy Portal</span></a>
+          </div>
+        </section>
+      </div>
+
+      <aside>
+        <section class="panel" aria-labelledby="apps-heading">
+          <p class="webpart-label">Quick Links web part</p>
+          <div class="panel-header">
+            <h3 id="apps-heading">Online applications</h3>
+          </div>
+          <div class="quick-grid">
+            <a class="quick-link" href="#"><span class="quick-icon">Pw</span><span>HTHK password change</span></a>
+            <a class="quick-link" href="#"><span class="quick-icon">CK</span><span>CKHH employee portal</span></a>
+            <a class="quick-link" href="#"><span class="quick-icon">Dir</span><span>CKHH directory</span></a>
+            <a class="quick-link" href="#"><span class="quick-icon">IT</span><span>IT e-requisition</span></a>
+            <a class="quick-link" href="#"><span class="quick-icon">HCM</span><span>HCM system</span></a>
+            <a class="quick-link" href="#"><span class="quick-icon">IDS</span><span>Information distribution</span></a>
+            <a class="quick-link" href="#"><span class="quick-icon">Car</span><span>Car booking</span></a>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="popular-heading">
+          <p class="webpart-label">Quick Links · grouped</p>
+          <div class="panel-header">
+            <h3 id="popular-heading">Popular items</h3>
+            <a href="#">Policies library</a>
+          </div>
+          <div class="quick-grid" style="grid-template-columns:1fr">
+            <a class="quick-link" href="#"><span class="quick-icon">i</span><span>Useful info</span></a>
+            <a class="quick-link" href="#"><span class="quick-icon">F</span><span>Common forms &amp; policies</span></a>
+            <a class="quick-link" href="#"><span class="quick-icon">?</span><span>FAQ</span></a>
+            <a class="quick-link" href="#"><span class="quick-icon">+</span><span>Panel doctors</span></a>
+            <a class="quick-link" href="#"><span class="quick-icon">Sec</span><span>Mobile &amp; email security guides</span></a>
+            <a class="quick-link" href="#"><span class="quick-icon">2FA</span><span>SSLVPN soft token guide</span></a>
+            <a class="quick-link" href="#"><span class="quick-icon">@</span><span>Staff suggestion box</span></a>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <button type="button" class="spec-toggle" id="spec-open" aria-expanded="false">UX / SharePoint mapping</button>
+  <div class="spec-overlay" id="spec-overlay" hidden></div>
+  <aside class="spec-panel" id="spec-panel" aria-label="UX specification">
+    <h2>Revamp UX principles</h2>
+    <p class="subtitle">Legacy frameset → single SharePoint communication site (hub)</p>
+
+    <h4>Remove</h4>
+    <ul>
+      <li>Two-frame layout (<code>menu_top</code> + <code>menu_right</code>)</li>
+      <li>Hand-edited HTML announcements</li>
+      <li>Mixed hosts opening in random targets (<code>_blank</code> / <code>main</code>)</li>
+      <li>Table-based layout and fixed 184px header</li>
+    </ul>
+
+    <h4>SharePoint build</h4>
+    <ul>
+      <li><strong>Hub site</strong> — top nav = associated department site links (Finance on separate site collection if needed)</li>
+      <li><strong>News</strong> — “What’s Hot” from News posts; metadata: Department, Expiry, Featured</li>
+      <li><strong>Hero</strong> — top story + CTA to PDF/page in document library</li>
+      <li><strong>Quick Links</strong> — Online apps + Popular items (two web parts or grouped links)</li>
+      <li><strong>Search</strong> — Microsoft Search verticals: People, Policies, Forms, News</li>
+      <li><strong>Viva Connections</strong> (optional) — same links in Teams mobile dashboard</li>
+    </ul>
+
+    <h4>IA mapping</h4>
+    <ul>
+      <li>Dept bar → Hub navigation + Department cards</li>
+      <li>Jetso / newsletter PDFs → HR or Comms site document libraries</li>
+      <li><code>popitems/</code> → Global navigation “Resources” hub page</li>
+      <li>External SaaS (Oracle, CKHH) → Quick links with “opens externally” icon</li>
+    </ul>
+
+    <h4>Accessibility &amp; mobile</h4>
+    <ul>
+      <li>One H1, logical heading order, keyboard nav</li>
+      <li>Responsive sections stack; hub nav becomes horizontal scroll or menu flyout</li>
+      <li>Support English + Traditional Chinese (legacy Big5 content migration)</li>
+    </ul>
+
+    <h4>Brand</h4>
+    <ul>
+      <li>Primary <code>#012D90</code>, accent <code>#FF6600</code> (SharePoint theme + section backgrounds)</li>
+      <li>Segoe UI / Fluent icons in production (mock uses text icons)</li>
+    </ul>
+  </aside>
+
+  <script>
+    (function () {
+      var d = new Date();
+      var el = document.getElementById("today-date");
+      if (el) {
+        el.textContent = d.toLocaleDateString("en-HK", { weekday: "short", year: "numeric", month: "long", day: "numeric" });
+      }
+      var openBtn = document.getElementById("spec-open");
+      var panel = document.getElementById("spec-panel");
+      var overlay = document.getElementById("spec-overlay");
+      function setOpen(open) {
+        panel.classList.toggle("open", open);
+        overlay.classList.toggle("open", open);
+        overlay.hidden = !open;
+        openBtn.setAttribute("aria-expanded", open ? "true" : "false");
+      }
+      openBtn.addEventListener("click", function () { setOpen(!panel.classList.contains("open")); });
+      overlay.addEventListener("click", function () { setOpen(false); });
+    })();
+  </script>
+</body>
+</html>

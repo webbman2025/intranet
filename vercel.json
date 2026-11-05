@@ -3,6 +3,9 @@
   "buildCommand": "npm run build --prefix figma_ai",
   "outputDirectory": "figma_ai/dist",
   "rewrites": [
-    { "source": "/guide", "destination": "/sharepoint-kit-homepage-guide.html" }
+    { "source": "/guide", "destination": "/sharepoint-kit-homepage-guide.html" },
+    { "source": "/gallery", "destination": "/intranet-design-gallery.html" },
+    { "source": "/mock", "destination": "/sharepoint-homepage-mock.html" },
+    { "source": "/architecture", "destination": "/site-architecture.html" }
   ]
 }

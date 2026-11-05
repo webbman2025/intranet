@@ -620,9 +620,11 @@ function HthkTaskDesign() {
   )
 }
 
-function readDesignFromUrl(): "task" | "kit" | "kit2" {
+function readDesignFromUrl(): "task" | "kit" | "kit2" | "kit3" {
   const value = new URLSearchParams(window.location.search).get("design")
-  if (value === "task" || value === "kit" || value === "kit2") return value
+  if (value === "task" || value === "kit" || value === "kit2" || value === "kit3") {
+    return value
+  }
   return "kit"
 }
 
@@ -654,12 +656,21 @@ export default function App() {
         >
           SharePoint Kit 2
         </button>
+        <button
+          className={design === "kit3" ? "active" : ""}
+          onClick={() => setDesign("kit3")}
+        >
+          SharePoint Kit 3
+        </button>
       </div>
       )}
       {design === "task" ? (
         <HthkTaskDesign />
       ) : (
-        <SharePointKitDesign heroFullWidth={design === "kit2"} />
+        <SharePointKitDesign
+          heroFullWidth={design === "kit2" || design === "kit3"}
+          kit3Bands={design === "kit3"}
+        />
       )}
     </>
   )
