@@ -620,18 +620,45 @@ function HthkTaskDesign() {
   )
 }
 
-function readDesignFromUrl(): "task" | "kit" | "kit2" | "kit3" {
+type HomepageDesign = "task" | "kit" | "kit2" | "kit3" | "kit4"
+
+const homepageDesigns: HomepageDesign[] = [
+  "task",
+  "kit",
+  "kit2",
+  "kit3",
+  "kit4",
+]
+
+function readDesignFromUrl(): HomepageDesign {
   const value = new URLSearchParams(window.location.search).get("design")
-  if (value === "task" || value === "kit" || value === "kit2" || value === "kit3") {
-    return value
+  if (value && homepageDesigns.includes(value as HomepageDesign)) {
+    return value as HomepageDesign
   }
   return "kit"
+}
+
+function pickDesign(design: HomepageDesign) {
+  const url = new URL(window.location.href)
+  url.searchParams.set("design", design)
+  window.history.replaceState(null, "", url)
+  return design
 }
 
 export default function App() {
   const [design, setDesign] = useState(readDesignFromUrl)
   const embedMode =
     new URLSearchParams(window.location.search).get("embed") === "1"
+
+  const chooseDesign = (next: HomepageDesign) => {
+    setDesign(pickDesign(next))
+  }
+
+  const kitHeroFullWidth =
+    design === "kit2" || design === "kit3" || design === "kit4"
+  const kitGroupBands = design === "kit3" || design === "kit4"
+  const kitVariant =
+    design === "kit4" ? "kit4" : design === "kit3" ? "kit3" : undefined
 
   return (
     <>
@@ -640,27 +667,33 @@ export default function App() {
         <span>Homepage design</span>
         <button
           className={design === "task" ? "active" : ""}
-          onClick={() => setDesign("task")}
+          onClick={() => chooseDesign("task")}
         >
           Task-first
         </button>
         <button
           className={design === "kit" ? "active" : ""}
-          onClick={() => setDesign("kit")}
+          onClick={() => chooseDesign("kit")}
         >
           SharePoint Kit
         </button>
         <button
           className={design === "kit2" ? "active" : ""}
-          onClick={() => setDesign("kit2")}
+          onClick={() => chooseDesign("kit2")}
         >
           SharePoint Kit 2
         </button>
         <button
           className={design === "kit3" ? "active" : ""}
-          onClick={() => setDesign("kit3")}
+          onClick={() => chooseDesign("kit3")}
         >
           SharePoint Kit 3
+        </button>
+        <button
+          className={design === "kit4" ? "active" : ""}
+          onClick={() => chooseDesign("kit4")}
+        >
+          SharePoint Kit 4
         </button>
       </div>
       )}
@@ -668,8 +701,9 @@ export default function App() {
         <HthkTaskDesign />
       ) : (
         <SharePointKitDesign
-          heroFullWidth={design === "kit2" || design === "kit3"}
-          kit3Bands={design === "kit3"}
+          heroFullWidth={kitHeroFullWidth}
+          kit3Bands={kitGroupBands}
+          kitVariant={kitVariant}
         />
       )}
     </>

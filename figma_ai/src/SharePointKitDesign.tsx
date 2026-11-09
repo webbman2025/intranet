@@ -395,15 +395,77 @@ const announcements = [
   },
 ] as const
 
-type NewsRoute = "home" | "all" | { topic: string }
+const kit4JetsoOffers = [
+  {
+    type: "Partner offer",
+    title: "Xtra Mall exclusive dining and wellness deals",
+    description:
+      "This month’s Staff Jetso picks—show your staff ID at participating merchants across Hong Kong.",
+    image: "offers",
+    action: "View Jetso details",
+    href: "#kit-hr-detail",
+    date: "Today",
+  },
+  {
+    type: "Retail",
+    title: "Electronics and handset staff pricing",
+    description:
+      "Seasonal discounts on accessories and selected devices for HTHK colleagues and families.",
+    image: "food",
+    action: "Browse offers",
+    href: "#kit-hr-detail",
+    date: "18 Nov",
+  },
+  {
+    type: "Travel",
+    title: "Harbour Plaza room offers for teams",
+    description:
+      "Book staycation packages and meeting venues at preferential colleague rates.",
+    image: "event",
+    action: "See Harbour Plaza Jetso",
+    href: "#kit-hr-detail",
+    date: "12 Nov",
+  },
+] as const
 
-function parseNewsRoute(hash: string): NewsRoute {
+const kit4ExtraQuickAccess = [
+  ["CKH Employee Portal", "people"],
+  ["eSphere", "file"],
+  ["CKH directory", "people"],
+] as const satisfies ReadonlyArray<readonly [string, KIconName]>
+
+const ceoColumns = [
+  [
+    "5 November 2026",
+    "Customer first, network resilience and our people",
+  ],
+  [
+    "22 October 2026",
+    "Quarter in review and priorities through year-end",
+  ],
+] as const
+
+type PageRoute =
+  | "home"
+  | "all"
+  | { topic: string }
+  | "ceo-message"
+  | "hr-detail"
+
+function parsePageRoute(hash: string): PageRoute {
   const value = hash.replace(/^#/, "")
+  if (value === "" || value === "kit-main") return "home"
+  if (value === "kit-ceo-message") return "ceo-message"
+  if (value === "kit-hr-detail") return "hr-detail"
   if (value === "kit-all-news") return "all"
   if (value.startsWith("kit-news-topic-")) {
     return { topic: value.slice("kit-news-topic-".length) }
   }
   return "home"
+}
+
+function isHubRoute(route: PageRoute): route is Exclude<PageRoute, "home"> {
+  return route !== "home"
 }
 
 function KitNewsHubStoryCard({
@@ -448,7 +510,11 @@ function KitNewsHubStoryCard({
   )
 }
 
-function KitNewsHubView({ route }: { route: Exclude<NewsRoute, "home"> }) {
+function KitNewsHubView({
+  route,
+}: {
+  route: "all" | { topic: string }
+}) {
   const topicSlug = route === "all" ? null : route.topic
   const topicLabel =
     topicSlug === null
@@ -571,6 +637,117 @@ function KitNewsHubView({ route }: { route: Exclude<NewsRoute, "home"> }) {
         </div>
       </div>
     </div>
+  )
+}
+
+function KitCeoMessageDetail() {
+  const [date, title] = ceoColumns[0]
+  return (
+    <article className="kit-article-detail kit-content" id="kit-ceo-message">
+      <nav className="kit-breadcrumb" aria-label="Breadcrumb">
+        <a href="#kit-main">Home</a>
+        <span aria-hidden="true">›</span>
+        <span aria-current="page">CEO message</span>
+      </nav>
+      <header className="kit-article-detail__header">
+        <p className="kit-topic">Leadership</p>
+        <h1>{title}</h1>
+        <p className="kit-article-detail__meta">
+          <time dateTime="2026-11-05">{date}</time>
+          <span aria-hidden="true">·</span>
+          <span>CEO bi-weekly column</span>
+          <span aria-hidden="true">·</span>
+          <span>6 min read</span>
+        </p>
+      </header>
+      <div className="kit-article-detail__hero">
+        <MockupImage variant="culture" label="" />
+      </div>
+      <div className="kit-article-detail__body">
+        <p>
+          Colleagues across HTHK have shown remarkable focus on customer
+          experience while we invest in network resilience and the tools our
+          people need every day. This column summarises how we will protect
+          service quality through year-end while continuing to simplify how
+          teams work.
+        </p>
+        <p>
+          Our priorities remain clear: listen to customers, act on feedback
+          quickly, and support frontline teams with training and recognition.
+          Network upgrades in core districts will continue on schedule, with
+          transparent status updates for staff who support business customers.
+        </p>
+        <p>
+          Thank you for the effort you put into every interaction—whether in
+          stores, contact centres or behind the scenes. Your work directly
+          shapes the trust our customers place in HTHK.
+        </p>
+      </div>
+      <footer className="kit-article-detail__footer">
+        <a className="kit-button kit-button--outline" href="#kit-main">
+          Back to homepage
+        </a>
+      </footer>
+    </article>
+  )
+}
+
+function KitHrDetail() {
+  return (
+    <article className="kit-article-detail kit-content" id="kit-hr-detail">
+      <nav className="kit-breadcrumb" aria-label="Breadcrumb">
+        <a href="#kit-main">Home</a>
+        <span aria-hidden="true">›</span>
+        <a href="#kit-news">Department&apos;s information</a>
+        <span aria-hidden="true">›</span>
+        <span aria-current="page">Human Resources</span>
+      </nav>
+      <header className="kit-article-detail__header">
+        <p className="kit-topic">Human Resources</p>
+        <h1>Staff Jetso Corner — November offers</h1>
+        <p className="kit-article-detail__meta">
+          <time dateTime="2026-11-09">9 November 2026</time>
+          <span aria-hidden="true">·</span>
+          <span>HR-approved</span>
+          <span aria-hidden="true">·</span>
+          <span>4 min read</span>
+        </p>
+      </header>
+      <div className="kit-article-detail__hero">
+        <MockupImage variant="offers" label="" />
+      </div>
+      <div className="kit-article-detail__body">
+        <p>
+          The Staff Jetso programme brings together dining, retail, travel and
+          wellness offers for HTHK colleagues. This month’s highlights include
+          Xtra Mall partners, handset accessories, and preferential Harbour Plaza
+          packages for team celebrations.
+        </p>
+        <h2>How to use your offers</h2>
+        <p>
+          Present your staff ID or use the HTHK Mobile app Jetso pass at
+          checkout. Some partners require pre-registration—follow the links in
+          each offer card before you visit.
+        </p>
+        <h2>Related HR services</h2>
+        <ul>
+          <li>
+            <a href="#app-My Benefits">Medical and benefits guides</a>
+          </li>
+          <li>
+            <a href="#app-HCM">HCM — pay, leave and personal details</a>
+          </li>
+          <li>
+            <a href="#all-policies">Employee handbook and policies</a>
+          </li>
+        </ul>
+      </div>
+      <footer className="kit-article-detail__footer">
+        <a className="kit-button kit-button--outline" href="#kit-main">
+          Back to homepage
+        </a>
+      </footer>
+    </article>
   )
 }
 
@@ -773,15 +950,69 @@ function Kit3JomehVideos() {
   )
 }
 
-function Kit3GroupContent() {
-  const brands = [
-    "HTHK",
-    "3",
-    "CK Hutchison",
-    "Hutchison Telecom",
-    "A.S. Watson Group",
-  ]
+const groupBrands = [
+  "HTHK",
+  "3",
+  "CK Hutchison",
+  "Hutchison Telecom",
+  "A.S. Watson Group",
+] as const
 
+function KitGroupBrandsStrip({ className }: { className?: string }) {
+  return (
+    <section
+      className={["kit3-brands-strip", className].filter(Boolean).join(" ")}
+      aria-labelledby="kit3-brands-title"
+    >
+      <div className="kit-content">
+        <h2 id="kit3-brands-title" className="kit3-brands-strip__label">
+          Our group brands
+        </h2>
+        <ul className="kit3-brands-strip__list">
+          {groupBrands.map((brand) => (
+            <li key={brand}>
+              <a href={`#brand-${newsTopicSlug(brand)}`}>{brand}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}
+
+function Kit4CeoSection() {
+  return (
+    <section
+      className="kit-content kit4-ceo-section"
+      aria-labelledby="kit4-ceo-heading"
+      id="kit4-ceo"
+    >
+      <div className="kit-section-title">
+        <div>
+          <p className="kit-topic">Leadership</p>
+          <h2 id="kit4-ceo-heading">CEO bi-weekly column</h2>
+          <p>Messages from group leadership, published every two weeks.</p>
+        </div>
+        <a href="#kit-ceo-message">Read latest →</a>
+      </div>
+      <div className="kit3-ceo-list">
+        {ceoColumns.map(([date, title]) => (
+          <a
+            className="kit3-ceo-list__item"
+            href="#kit-ceo-message"
+            key={date}
+          >
+            <time>{date}</time>
+            <span>{title}</span>
+            <KIcon name="chevron" size={16} />
+          </a>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+function Kit3GroupContent() {
   return (
     <div className="kit3-group" id="kit3-group-content">
       <section className="kit-content kit3-group-header">
@@ -833,16 +1064,7 @@ function Kit3GroupContent() {
             <a href="#ceo-columns">All columns →</a>
           </div>
           <div className="kit3-ceo-list">
-            {[
-              [
-                "5 November 2026",
-                "Customer first, network resilience and our people",
-              ],
-              [
-                "22 October 2026",
-                "Quarter in review and priorities through year-end",
-              ],
-            ].map(([date, title]) => (
+            {ceoColumns.map(([date, title]) => (
               <a className="kit3-ceo-list__item" href={`#ceo-${date}`} key={date}>
                 <time>{date}</time>
                 <span>{title}</span>
@@ -952,20 +1174,112 @@ function Kit3GroupContent() {
 
       <Kit3JomehVideos />
 
-      <section className="kit3-brands-strip" aria-labelledby="kit3-brands-title">
-        <div className="kit-content">
-          <h2 id="kit3-brands-title" className="kit3-brands-strip__label">
-            Our group brands
-          </h2>
-          <ul className="kit3-brands-strip__list">
-            {brands.map((brand) => (
-              <li key={brand}>
-                <a href={`#brand-${newsTopicSlug(brand)}`}>{brand}</a>
-              </li>
-            ))}
-          </ul>
+      <KitGroupBrandsStrip />
+    </div>
+  )
+}
+
+function Kit4GroupContent() {
+  return (
+    <div className="kit3-group kit4-group" id="kit4-group-content">
+      <section className="kit-content kit3-group-header">
+        <div className="kit-section-title">
+          <div>
+            <p className="kit-topic">CK Hutchison group</p>
+            <h2 id="kit4-group-heading">Group &amp; corporate</h2>
+            <p>
+              Public corporate information and group newsletters—alongside your
+              HTHK homepage above.
+            </p>
+          </div>
         </div>
       </section>
+
+      <section className="kit3-corporate" aria-labelledby="kit4-corporate">
+        <div className="kit-content">
+          <div className="kit3-corporate__card">
+            <div>
+              <p className="kit-topic">Public corporate site</p>
+              <h3 id="kit4-corporate">Corporate information</h3>
+              <p>
+                Sustainability, investor news and group-wide stories on the
+                public HTHK site—separate from day-to-day staff tools above.
+              </p>
+            </div>
+            <a
+              className="kit-button kit-button--outline"
+              href="https://www.hthkh.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Visit hthkh.com
+              <KIcon name="chevron" size={16} />
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section
+        className="kit-content kit4-newsletter"
+        aria-labelledby="kit4-3pulse"
+      >
+        <article className="kit3-panel">
+          <p className="kit-topic">Staff newsletter</p>
+          <h3 id="kit4-3pulse">3Pulse</h3>
+          <p>
+            Group stories, colleague offers and team updates in one newsletter.
+          </p>
+          <a href="#3pulse-latest">Read latest issue →</a>
+        </article>
+      </section>
+
+      <section
+        className="kit-announcements kit-content kit3-spotlight"
+        aria-labelledby="kit4-people"
+      >
+        <div className="kit-section-title">
+          <div>
+            <p className="kit-topic">People · HR-approved content</p>
+            <h2 id="kit4-people">People Awards</h2>
+            <p>Recognising colleagues and teams across HTHK.</p>
+          </div>
+          <a href="#people-awards">See all →</a>
+        </div>
+        <div className="kit-announcement-grid kit-announcement-grid--pair">
+          <article>
+            <MockupImage variant="people" label="" />
+            <div className="kit-announcement-body">
+              <div>
+                <span>Team award</span>
+                <time>Today</time>
+              </div>
+              <h3>Analytics &amp; AI — innovation in customer care</h3>
+              <p>
+                Celebrating the team’s Q3 project that reduced call handling
+                time while improving satisfaction scores.
+              </p>
+              <a href="#award-analytics">View citation →</a>
+            </div>
+          </article>
+          <article>
+            <MockupImage variant="event" label="" />
+            <div className="kit-announcement-body">
+              <div>
+                <span>Individual award</span>
+                <time>15 Nov</time>
+              </div>
+              <h3>Customer care excellence award</h3>
+              <p>
+                Frontline colleagues recognised for outstanding service—nominate
+                someone for the next round.
+              </p>
+              <a href="#care-award">Read more →</a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <Kit3JomehVideos />
     </div>
   )
 }
@@ -973,19 +1287,23 @@ function Kit3GroupContent() {
 type SharePointKitDesignProps = {
   /** SharePoint Kit 2: same 5-tile hero as Kit 1, full width (no 1204px cap) */
   heroFullWidth?: boolean
-  /** SharePoint Kit 3: CKH / group content bands from intranet requirements */
+  /** SharePoint Kit 3 & 4: CKH / group content bands from intranet requirements */
   kit3Bands?: boolean
+  /** Marks Kit 3 vs Kit 4 for future variant styling (Kit 4 starts as a Kit 3 clone). */
+  kitVariant?: "kit3" | "kit4"
 }
 
 export default function SharePointKitDesign({
   heroFullWidth = false,
   kit3Bands = false,
+  kitVariant,
 }: SharePointKitDesignProps) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [query, setQuery] = useState("")
   const [result, setResult] = useState("")
   const [likedStory, setLikedStory] = useState<string | null>(null)
-  const [newsRoute, setNewsRoute] = useState<NewsRoute>("home")
+  const [pageRoute, setPageRoute] = useState<PageRoute>("home")
+  const isKit4 = kitVariant === "kit4"
   const [heroSlide, setHeroSlide] = useState(0)
   const heroSlideCount = heroTiles.length
   const heroTouchStartX = useRef<number | null>(null)
@@ -993,15 +1311,15 @@ export default function SharePointKitDesign({
   useGuideEmbedMetrics()
 
   useEffect(() => {
-    const syncNewsRouteFromHash = () => {
-      const route = parseNewsRoute(window.location.hash)
-      setNewsRoute(route)
+    const syncPageRouteFromHash = () => {
+      const route = parsePageRoute(window.location.hash)
+      setPageRoute(route)
       setMenuOpen(false)
       if (route !== "home") window.scrollTo(0, 0)
     }
-    syncNewsRouteFromHash()
-    window.addEventListener("hashchange", syncNewsRouteFromHash)
-    return () => window.removeEventListener("hashchange", syncNewsRouteFromHash)
+    syncPageRouteFromHash()
+    window.addEventListener("hashchange", syncPageRouteFromHash)
+    return () => window.removeEventListener("hashchange", syncPageRouteFromHash)
   }, [])
 
   function closeHubNav() {
@@ -1034,11 +1352,27 @@ export default function SharePointKitDesign({
     )
   }
 
+  const onDetailOrHub = isHubRoute(pageRoute)
+  const kitPageClass = [
+    "kit-page",
+    onDetailOrHub ? "kit-page--news-hub" : "",
+    onDetailOrHub &&
+    (pageRoute === "ceo-message" || pageRoute === "hr-detail")
+      ? "kit-page--article"
+      : "",
+  ]
+    .filter(Boolean)
+    .join(" ")
+  const kitVariantClass = kitVariant ? `kit-page--${kitVariant}` : ""
+
+  const quickAccessLinks = isKit4
+    ? ([...appLinks, ...kit4ExtraQuickAccess] as const)
+    : appLinks
+
   return (
     <div
-      className={
-        newsRoute === "home" ? "kit-page" : "kit-page kit-page--news-hub"
-      }
+      className={[kitPageClass, kitVariantClass].filter(Boolean).join(" ")}
+      data-kit-design={kitVariant ?? (kit3Bands ? "kit3-bands" : undefined)}
     >
       <a className="skip-link" href="#kit-main">
         Skip to main content
@@ -1112,10 +1446,14 @@ export default function SharePointKitDesign({
             </div>
           </div>
           <div className="kit-site-actions">
-            <button>
-              <KIcon name="people" size={17} /> 1,640 members
-            </button>
-            <button>Follow</button>
+            {kitVariant !== "kit4" && (
+              <>
+                <button type="button">
+                  <KIcon name="people" size={17} /> 1,640 members
+                </button>
+                <button type="button">Follow</button>
+              </>
+            )}
             <button
               onClick={() => setMenuOpen(!menuOpen)}
               className="kit-menu"
@@ -1132,7 +1470,7 @@ export default function SharePointKitDesign({
             }}
           >
             <a
-              className={newsRoute === "home" ? "active" : ""}
+              className={pageRoute === "home" ? "active" : ""}
               href="#kit-main"
             >
               Home
@@ -1140,7 +1478,7 @@ export default function SharePointKitDesign({
             <a href="#kit-apps">My tools</a>
             <a href="#kit-announcements">Staff announcements</a>
             <a
-              className={newsRoute !== "home" ? "active" : ""}
+              className={pageRoute !== "home" ? "active" : ""}
               href="#kit-all-news"
             >
               News
@@ -1152,32 +1490,41 @@ export default function SharePointKitDesign({
         </header>
 
         <main id="kit-main">
-          {newsRoute === "home" ? (
+          {pageRoute === "home" ? (
           <>
           <section
-            className={
+            className={[
               heroFullWidth
                 ? "kit-personal-bar kit-personal-bar--full"
-                : "kit-personal-bar kit-content"
-            }
+                : "kit-personal-bar kit-content",
+              kitVariant === "kit4" ? "kit-personal-bar--greeting-only" : "",
+            ]
+              .filter(Boolean)
+              .join(" ")}
             aria-label="Personalised homepage status"
           >
             <div className="kit-personal-bar__start">
               <span className="kit-personal-bar__you">
                 <KIcon name="spark" size={20} />
                 <strong>For you, Alex</strong>
-                <span className="kit-personal-bar__meta">
-                  Personalised automatically
+                {kitVariant !== "kit4" && (
+                  <span className="kit-personal-bar__meta">
+                    Personalised automatically
+                  </span>
+                )}
+              </span>
+              {kitVariant !== "kit4" && (
+                <span className="kit-personal-bar__trust">
+                  <KIcon name="shield" size={20} />
+                  AI answers use trusted HTHK sources
                 </span>
-              </span>
-              <span className="kit-personal-bar__trust">
-                <KIcon name="shield" size={20} />
-                AI answers use trusted HTHK sources
-              </span>
+              )}
             </div>
-            <a className="kit-personal-bar__action" href="#personalise">
-              Personalise this page
-            </a>
+            {kitVariant !== "kit4" && (
+              <a className="kit-personal-bar__action" href="#personalise">
+                Personalise this page
+              </a>
+            )}
           </section>
 
           <section
@@ -1266,12 +1613,18 @@ export default function SharePointKitDesign({
           <section className="kit-apps kit-content" id="kit-apps">
             <div className="kit-section-title">
               <div>
-                <h2>Online applications</h2>
-                <p>Your most-used tools, all in one place.</p>
+                <h2>
+                  {isKit4 ? "Quick access for Staff" : "Online applications"}
+                </h2>
+                <p>
+                  {isKit4
+                    ? "Everyday tools and group applications in one place."
+                    : "Your most-used tools, all in one place."}
+                </p>
               </div>
             </div>
             <div className="kit-app-grid">
-              {appLinks.map(([name, icon]) => (
+              {quickAccessLinks.map(([name, icon]) => (
                 <a href={`#app-${name}`} key={name}>
                   <span>
                     <KIcon name={icon as KIconName} />
@@ -1289,16 +1642,22 @@ export default function SharePointKitDesign({
           >
             <div className="kit-section-title">
               <div>
-                <p className="kit-topic">Important for staff</p>
-                <h2>Staff announcements</h2>
+                <p className="kit-topic">
+                  {isKit4 ? "Staff benefits" : "Important for staff"}
+                </p>
+                <h2>{isKit4 ? "Staff Jetso" : "Staff announcements"}</h2>
                 <p>
-                  Offers, people updates and leadership messages in one place.
+                  {isKit4
+                    ? "Exclusive offers and partner deals for HTHK colleagues."
+                    : "Offers, people updates and leadership messages in one place."}
                 </p>
               </div>
-              <a href="#all-announcements">See all announcements →</a>
+              <a href={isKit4 ? "#kit-hr-detail" : "#all-announcements"}>
+                {isKit4 ? "Staff Jetso Corner →" : "See all announcements →"}
+              </a>
             </div>
             <div className="kit-announcement-grid">
-              {announcements.map((item) => (
+              {(isKit4 ? kit4JetsoOffers : announcements).map((item) => (
                 <article key={item.title}>
                   <MockupImage variant={item.image as MockupVariant} label="" />
                   <div className="kit-announcement-body">
@@ -1308,7 +1667,15 @@ export default function SharePointKitDesign({
                     </div>
                     <h3>{item.title}</h3>
                     <p>{item.description}</p>
-                    <a href={`#${item.title}`}>{item.action} →</a>
+                    <a
+                      href={
+                        "href" in item && item.href
+                          ? item.href
+                          : `#${item.title}`
+                      }
+                    >
+                      {item.action} →
+                    </a>
                   </div>
                 </article>
               ))}
@@ -1318,17 +1685,30 @@ export default function SharePointKitDesign({
           <section className="kit-news kit-content" id="kit-news">
             <div className="kit-section-title">
               <div>
-                <h2>What’s hot</h2>
-                <p>Latest updates from across HTHK.</p>
+                <h2>
+                  {isKit4 ? "Department's information" : "What’s hot"}
+                </h2>
+                <p>
+                  {isKit4
+                    ? "Updates and resources from HR, IT, Admin and other departments."
+                    : "Latest updates from across HTHK."}
+                </p>
               </div>
-              <a href="#kit-all-news">See all news →</a>
+              <a href="#kit-all-news">
+                {isKit4 ? "All departments →" : "See all news →"}
+              </a>
             </div>
             <div className="kit-news-grid">
-              {newsTopicHomeCards.map((story) => (
+              {newsTopicHomeCards.map((story) => {
+                const storyHref =
+                  isKit4 && story.tag === "Human Resources"
+                    ? "#kit-hr-detail"
+                    : `#news-article-${newsTopicSlug(story.title)}`
+                return (
                 <article className="kit-story-card" key={story.title}>
                   <a
                     className="kit-story-card__media"
-                    href={`#news-article-${newsTopicSlug(story.title)}`}
+                    href={storyHref}
                     aria-hidden="true"
                     tabIndex={-1}
                   >
@@ -1343,9 +1723,7 @@ export default function SharePointKitDesign({
                       {story.tag}
                     </a>
                     <h3>
-                      <a href={`#news-article-${newsTopicSlug(story.title)}`}>
-                        {story.title}
-                      </a>
+                      <a href={storyHref}>{story.title}</a>
                     </h3>
                     <small>18 November 2026 · 3 min read</small>
                     <div className="kit-social-actions">
@@ -1369,11 +1747,15 @@ export default function SharePointKitDesign({
                     </div>
                   </div>
                 </article>
-              ))}
+              )
+              })}
             </div>
           </section>
 
-          {kit3Bands && <Kit3GroupContent />}
+          {isKit4 && <Kit4CeoSection />}
+
+          {kit3Bands &&
+            (isKit4 ? <Kit4GroupContent /> : <Kit3GroupContent />)}
 
           <section className="kit-app-download kit-content">
             <div className="kit-app-download__copy">
@@ -1590,9 +1972,17 @@ export default function SharePointKitDesign({
               ))}
             </div>
           </section>
+
+          {isKit4 && (
+            <KitGroupBrandsStrip className="kit4-brands-strip--footer" />
+          )}
           </>
+          ) : pageRoute === "ceo-message" ? (
+            <KitCeoMessageDetail />
+          ) : pageRoute === "hr-detail" ? (
+            <KitHrDetail />
           ) : (
-            <KitNewsHubView route={newsRoute} />
+            <KitNewsHubView route={pageRoute} />
           )}
         </main>
 

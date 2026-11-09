@@ -464,6 +464,110 @@ footer#help { color: #fff; background: #01324f; }
 }
 .kit-personal-bar__action:hover { text-decoration: underline; }
 
+.kit-page--kit4 .kit-personal-bar--greeting-only {
+  min-height: 0;
+  justify-content: flex-start;
+  padding-block: 12px;
+}
+
+.kit-page--kit4 .kit4-ceo-section {
+  padding-block: 8px 24px;
+}
+
+.kit-page--kit4 .kit4-ceo-section .kit3-ceo-list {
+  margin-top: 4px;
+}
+
+.kit-page--kit4 .kit4-newsletter {
+  padding-block: 8px 16px;
+}
+
+.kit-page--kit4 .kit4-newsletter .kit3-panel {
+  max-width: 640px;
+}
+
+.kit-page--kit4 .kit4-brands-strip--footer {
+  margin-top: 8px;
+  border-top: 1px solid #edebe9;
+}
+
+.kit-page--article .kit-article-detail {
+  padding-block: 28px 56px;
+}
+
+.kit-article-detail .kit-breadcrumb {
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.kit-article-detail__header h1 {
+  margin-top: 6px;
+  color: #323130;
+  font-size: clamp(26px, 4vw, 34px);
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+.kit-article-detail__meta {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  color: #605e5c;
+  font-size: 14px;
+}
+
+.kit-article-detail__hero {
+  margin-block: 20px;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.kit-article-detail__hero .kit-mockup {
+  height: min(52vw, 360px);
+}
+
+.kit-article-detail__body {
+  max-width: 720px;
+  color: #323130;
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+.kit-article-detail__body p + p {
+  margin-top: 14px;
+}
+
+.kit-article-detail__body h2 {
+  margin-top: 24px;
+  margin-bottom: 8px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.kit-article-detail__body ul {
+  margin-top: 10px;
+  padding-left: 1.25rem;
+  list-style: disc;
+}
+
+.kit-article-detail__body li + li {
+  margin-top: 6px;
+}
+
+.kit-article-detail__body a {
+  color: #006eaf;
+  font-weight: 600;
+}
+
+.kit-article-detail__body a:hover {
+  text-decoration: underline;
+}
+
+.kit-article-detail__footer {
+  margin-top: 32px;
+}
+
 .kit-hero { position: relative; padding-block: 32px; }
 .kit-hero--full {
   width: 100%;
