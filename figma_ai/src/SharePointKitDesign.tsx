@@ -725,7 +725,7 @@ function KitHrDetail() {
         </p>
         <h2>How to use your offers</h2>
         <p>
-          Present your staff ID or use the HTHK Mobile app Jetso pass at
+          Present your staff ID or use the 3HK app Jetso pass at
           checkout. Some partners require pre-registration—follow the links in
           each offer card before you visit.
         </p>
@@ -1434,16 +1434,29 @@ export default function SharePointKitDesign({
       <div className="kit-wrap">
         <header className="kit-site-header">
           <div className="kit-identity">
-            <span className="brand-mark" aria-hidden="true">
-              <i />
-              <i />
-              <i />
-              <i />
-            </span>
-            <div>
-              <h1>HTHK Intranet</h1>
-              <p>Hutchison Telecommunications Hong Kong</p>
-            </div>
+            {isKit4 ? (
+              <a className="kit-identity__logo" href="#kit-main">
+                <img
+                  src="/assets/hthk-header-logo.png"
+                  width={238}
+                  height={50}
+                  alt="Hutchison Telecom Hong Kong Holdings"
+                />
+              </a>
+            ) : (
+              <>
+                <span className="brand-mark" aria-hidden="true">
+                  <i />
+                  <i />
+                  <i />
+                  <i />
+                </span>
+                <div>
+                  <h1>HTHK Intranet</h1>
+                  <p>Hutchison Telecommunications Hong Kong</p>
+                </div>
+              </>
+            )}
           </div>
           <div className="kit-site-actions">
             {kitVariant !== "kit4" && (
@@ -1757,35 +1770,67 @@ export default function SharePointKitDesign({
           {kit3Bands &&
             (isKit4 ? <Kit4GroupContent /> : <Kit3GroupContent />)}
 
-          <section className="kit-app-download kit-content">
+          <section
+            className={[
+              "kit-app-download kit-content",
+              isKit4 ? "kit-app-download--3hk" : "",
+            ]
+              .filter(Boolean)
+              .join(" ")}
+          >
             <div className="kit-app-download__copy">
-              <p className="kit-topic">HTHK Mobile</p>
-              <h2>Your intranet, wherever work takes you.</h2>
+              <p className="kit-topic">
+                {isKit4 ? "3HK app" : "HTHK Mobile"}
+              </p>
+              <h2>
+                {isKit4
+                  ? "Download the 3HK app—staff benefits in your pocket."
+                  : "Your intranet, wherever work takes you."}
+              </h2>
               <p>
-                Get staff announcements, urgent notices, schedules and everyday
-                tools on your phone. Designed to help frontline and office
-                colleagues stay connected.
+                {isKit4
+                  ? "We want every colleague on the 3HK app: manage your plan, use staff Jetso, and check usage and bills on the go. The same app our customers love—with offers and tools for HTHK people."
+                  : "Get staff announcements, urgent notices, schedules and everyday tools on your phone. Designed to help frontline and office colleagues stay connected."}
               </p>
               <ul>
-                <li>
-                  <KIcon name="bell" size={18} />
-                  Receive important staff alerts
-                </li>
-                <li>
-                  <KIcon name="shield" size={18} />
-                  Secure sign-in with your HTHK account
-                </li>
-                <li>
-                  <KIcon name="apps" size={18} />
-                  Open forms and staff tools quickly
-                </li>
+                {isKit4 ? (
+                  <>
+                    <li>
+                      <KIcon name="apps" size={18} />
+                      Usage, top-up, bills and rewards in one place
+                    </li>
+                    <li>
+                      <KIcon name="shield" size={18} />
+                      Staff Jetso and colleague-exclusive deals in-app
+                    </li>
+                    <li>
+                      <KIcon name="bell" size={18} />
+                      Latest handset offers and money-back promotions
+                    </li>
+                  </>
+                ) : (
+                  <>
+                    <li>
+                      <KIcon name="bell" size={18} />
+                      Receive important staff alerts
+                    </li>
+                    <li>
+                      <KIcon name="shield" size={18} />
+                      Secure sign-in with your HTHK account
+                    </li>
+                    <li>
+                      <KIcon name="apps" size={18} />
+                      Open forms and staff tools quickly
+                    </li>
+                  </>
+                )}
               </ul>
               <div className="kit-store-buttons">
-                <a href="#ios-app">
+                <a href={isKit4 ? "#3hk-ios" : "#ios-app"}>
                   <small>Download on the</small>
                   <strong>App Store</strong>
                 </a>
-                <a href="#android-app">
+                <a href={isKit4 ? "#3hk-android" : "#android-app"}>
                   <small>Get it on</small>
                   <strong>Google Play</strong>
                 </a>
@@ -1793,7 +1838,11 @@ export default function SharePointKitDesign({
             </div>
             <div
               className="kit-phone-preview"
-              aria-label="HTHK mobile intranet app preview"
+              aria-label={
+                isKit4
+                  ? "3HK mobile app preview for staff"
+                  : "HTHK mobile intranet app preview"
+              }
             >
               <div className="kit-phone-preview__cluster">
               <img
@@ -1801,7 +1850,11 @@ export default function SharePointKitDesign({
                 src="/assets/hthk-mobile-app-screen.png"
                 width={280}
                 height={520}
-                alt="Mobile app home screen reference: account summary, quick actions, and promotional carousel"
+                alt={
+                  isKit4
+                    ? "3HK app home screen: data usage, top up, quick links and promotions"
+                    : "Mobile app home screen reference: account summary, quick actions, and promotional carousel"
+                }
               />
               <div className="kit-qr" aria-label="QR code placeholder">
                 <svg viewBox="0 0 84 84" aria-hidden="true">

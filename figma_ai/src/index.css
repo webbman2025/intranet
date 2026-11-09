@@ -305,6 +305,9 @@ footer#help { color: #fff; background: #01324f; }
 /* SharePoint Web UI Kit adaptation */
 .kit-page {
   min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
   color: #323130;
   background: #fff;
   font-family: "Segoe UI", Arial, Helvetica, sans-serif;
@@ -364,9 +367,29 @@ footer#help { color: #fff; background: #01324f; }
 .kit-rail a { width: 47px; height: 47px; display: grid; place-items: center; border-left: 3px solid transparent; color: #484644; }
 .kit-rail a:hover { background: #e1dfdd; }
 .kit-rail a.active { border-color: #007bc7; color: #007bc7; background: #fff; }
-.kit-wrap { margin-left: 48px; }
+.kit-wrap {
+  margin-left: 48px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.kit-wrap > #kit-main { flex: 1 1 auto; }
 .kit-site-header { position: relative; z-index: 20; min-height: 112px; padding: 18px 32px 0; border-bottom: 1px solid #edebe9; background: #fff; }
 .kit-identity { display: flex; align-items: center; gap: 12px; }
+.kit-page--kit4 .kit-identity__logo {
+  display: flex;
+  align-items: center;
+  line-height: 0;
+}
+.kit-page--kit4 .kit-identity__logo img {
+  display: block;
+  width: auto;
+  height: 40px;
+  max-width: min(238px, 58vw);
+  object-fit: contain;
+  object-position: left center;
+}
 .kit-identity .brand-mark, .kit-footer .brand-mark { width: 40px; height: 40px; }
 .kit-identity h1 { color: #242424; font-family: "Segoe UI", Arial, sans-serif; font-size: 24px; font-weight: 600; line-height: 28px; }
 .kit-identity p { margin-top: 2px; color: #605e5c; font-size: 12px; line-height: 16px; }
@@ -680,6 +703,15 @@ footer#help { color: #fff; background: #01324f; }
 }
 
 .kit-page--news-hub .kit-wrap { background: #faf9f8; }
+.kit-page--news-hub #kit-main,
+.kit-page--article #kit-main {
+  display: flex;
+  flex-direction: column;
+}
+.kit-page--news-hub #kit-main > .kit-news-hub,
+.kit-page--article #kit-main > .kit-article-detail {
+  flex: 1 1 auto;
+}
 
 .kit-news-hub { padding-bottom: 56px; }
 
@@ -1299,6 +1331,10 @@ footer#help { color: #fff; background: #01324f; }
 }
 
 .kit-app-download { margin-block: 32px 40px; display: grid; grid-template-columns: 1.1fr .9fr; overflow: hidden; color: #fff; background: #01324f; }
+.kit-page--kit4 .kit-app-download--3hk .kit-app-download__copy .kit-topic {
+  color: #b8f0ff !important;
+  letter-spacing: 0.08em;
+}
 .kit-app-download__copy { padding: 46px 50px; }
 .kit-app-download__copy .kit-label { color: #fff; border-color: rgba(255,255,255,.45); background: rgba(255,255,255,.1); }
 .kit-app-download__copy .kit-topic { color: #70d7fa!important; }
@@ -1519,6 +1555,7 @@ footer#help { color: #fff; background: #01324f; }
   .kit-rail { display: none; }
   .kit-wrap { margin-left: 0; }
   .kit-identity .brand-mark { width: 32px; height: 32px; }
+  .kit-page--kit4 .kit-identity__logo img { height: 34px; }
   .kit-identity h1 { font-size: 20px; line-height: 24px; }
   .kit-identity p { display: none; }
   .kit-site-actions { top: 11px; right: 15px; }
