@@ -429,6 +429,7 @@ const kit4JetsoOffers = [
 ] as const
 
 const kit4ExtraQuickAccess = [
+  ["Shuttle bus schedule", "calendar"],
   ["CKH Employee Portal", "people"],
   ["eSphere", "file"],
   ["CKH directory", "people"],
@@ -958,7 +959,20 @@ const groupBrands = [
   "A.S. Watson Group",
 ] as const
 
-function KitGroupBrandsStrip({ className }: { className?: string }) {
+const kit4GroupBrands = [
+  "HTHK",
+  "3",
+  "CK Hutchison",
+  "Hutchison Telecom",
+] as const
+
+function KitGroupBrandsStrip({
+  className,
+  brands = groupBrands,
+}: {
+  className?: string
+  brands?: readonly string[]
+}) {
   return (
     <section
       className={["kit3-brands-strip", className].filter(Boolean).join(" ")}
@@ -969,7 +983,7 @@ function KitGroupBrandsStrip({ className }: { className?: string }) {
           Our group brands
         </h2>
         <ul className="kit3-brands-strip__list">
-          {groupBrands.map((brand) => (
+          {brands.map((brand) => (
             <li key={brand}>
               <a href={`#brand-${newsTopicSlug(brand)}`}>{brand}</a>
             </li>
@@ -980,33 +994,52 @@ function KitGroupBrandsStrip({ className }: { className?: string }) {
   )
 }
 
-function Kit4CeoSection() {
+function Kit4GroupCommsSection() {
   return (
     <section
-      className="kit-content kit4-ceo-section"
-      aria-labelledby="kit4-ceo-heading"
-      id="kit4-ceo"
+      className="kit-content kit4-group-comms"
+      aria-labelledby="kit4-group-comms-heading"
+      id="kit4-group-comms"
     >
       <div className="kit-section-title">
         <div>
-          <p className="kit-topic">Leadership</p>
-          <h2 id="kit4-ceo-heading">CEO bi-weekly column</h2>
-          <p>Messages from group leadership, published every two weeks.</p>
+          <p className="kit-topic">Group communications</p>
+          <h2 id="kit4-group-comms-heading">Leadership &amp; 3Pulse</h2>
+          <p>
+            CEO bi-weekly messages and the staff newsletter—official group updates
+            in one place.
+          </p>
         </div>
+      </div>
+      <div className="kit4-group-comms__subhead">
+        <h3 id="kit4-ceo-heading">CEO bi-weekly column</h3>
         <a href="#kit-ceo-message">Read latest →</a>
       </div>
-      <div className="kit3-ceo-list">
-        {ceoColumns.map(([date, title]) => (
-          <a
-            className="kit3-ceo-list__item"
-            href="#kit-ceo-message"
-            key={date}
-          >
-            <time>{date}</time>
-            <span>{title}</span>
-            <KIcon name="chevron" size={16} />
-          </a>
-        ))}
+      <div className="kit4-group-comms__layout">
+        <div className="kit4-group-comms__main">
+          <div className="kit3-ceo-list">
+            {ceoColumns.map(([date, title]) => (
+              <a
+                className="kit3-ceo-list__item"
+                href="#kit-ceo-message"
+                key={date}
+              >
+                <time>{date}</time>
+                <span>{title}</span>
+                <KIcon name="chevron" size={16} />
+              </a>
+            ))}
+          </div>
+        </div>
+        <aside className="kit4-group-comms__aside" id="kit4-3pulse">
+          <article className="kit3-panel kit4-group-comms__pulse">
+            <h3>3Pulse</h3>
+            <p>
+              Group stories, colleague offers and team updates in one newsletter.
+            </p>
+            <a href="#3pulse-latest">Read latest issue →</a>
+          </article>
+        </aside>
       </div>
     </section>
   )
@@ -1188,8 +1221,8 @@ function Kit4GroupContent() {
             <p className="kit-topic">CK Hutchison group</p>
             <h2 id="kit4-group-heading">Group &amp; corporate</h2>
             <p>
-              Public corporate information and group newsletters—alongside your
-              HTHK homepage above.
+              Public corporate and investor information—separate from staff tools
+              and internal news on your HTHK homepage above.
             </p>
           </div>
         </div>
@@ -1217,20 +1250,6 @@ function Kit4GroupContent() {
             </a>
           </div>
         </div>
-      </section>
-
-      <section
-        className="kit-content kit4-newsletter"
-        aria-labelledby="kit4-3pulse"
-      >
-        <article className="kit3-panel">
-          <p className="kit-topic">Staff newsletter</p>
-          <h3 id="kit4-3pulse">3Pulse</h3>
-          <p>
-            Group stories, colleague offers and team updates in one newsletter.
-          </p>
-          <a href="#3pulse-latest">Read latest issue →</a>
-        </article>
       </section>
 
       <section
@@ -1765,7 +1784,7 @@ export default function SharePointKitDesign({
             </div>
           </section>
 
-          {isKit4 && <Kit4CeoSection />}
+          {isKit4 && <Kit4GroupCommsSection />}
 
           {kit3Bands &&
             (isKit4 ? <Kit4GroupContent /> : <Kit3GroupContent />)}
@@ -2027,7 +2046,10 @@ export default function SharePointKitDesign({
           </section>
 
           {isKit4 && (
-            <KitGroupBrandsStrip className="kit4-brands-strip--footer" />
+            <KitGroupBrandsStrip
+              className="kit4-brands-strip--footer"
+              brands={kit4GroupBrands}
+            />
           )}
           </>
           ) : pageRoute === "ceo-message" ? (
@@ -2042,16 +2064,28 @@ export default function SharePointKitDesign({
         <footer className="kit-footer">
           <div className="kit-content">
             <div className="kit-footer-brand">
-              <span className="brand-mark" aria-hidden="true">
-                <i />
-                <i />
-                <i />
-                <i />
-              </span>
-              <span>
-                <strong>HTHK Intranet</strong>
-                <small>Scalable SharePoint hub · Trusted content</small>
-              </span>
+              {isKit4 ? (
+                <img
+                  className="kit-footer__ckh-logo"
+                  src="/assets/ckh-member-logo.png"
+                  width={174}
+                  height={21}
+                  alt="A member of CK Hutchison Holdings"
+                />
+              ) : (
+                <>
+                  <span className="brand-mark" aria-hidden="true">
+                    <i />
+                    <i />
+                    <i />
+                    <i />
+                  </span>
+                  <span>
+                    <strong>HTHK Intranet</strong>
+                    <small>Scalable SharePoint hub · Trusted content</small>
+                  </span>
+                </>
+              )}
             </div>
             <nav aria-label="Footer">
               <a href="#privacy">Data Privacy</a>
