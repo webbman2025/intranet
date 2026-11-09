@@ -522,11 +522,6 @@ footer#help { color: #fff; background: #01324f; }
 }
 
 .kit-page--kit4 .kit4-group-comms__subhead {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 8px 16px;
   margin-bottom: 10px;
 }
 
@@ -536,16 +531,6 @@ footer#help { color: #fff; background: #01324f; }
   font-size: 17px;
   font-weight: 600;
   line-height: 22px;
-}
-
-.kit-page--kit4 .kit4-group-comms__subhead a {
-  color: #006eaf;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.kit-page--kit4 .kit4-group-comms__subhead a:hover {
-  text-decoration: underline;
 }
 
 .kit-page--kit4 .kit4-group-comms__layout {
@@ -1417,6 +1402,14 @@ footer#help { color: #fff; background: #01324f; }
 .kit-page--kit4 .kit-app-download--3hk .kit-app-download__copy .kit-topic {
   color: #b8f0ff !important;
   letter-spacing: 0.08em;
+}
+
+.kit-page--kit4 .kit-app-download {
+  margin-block: 24px 20px;
+}
+
+.kit-page--kit4 .kit-popular {
+  padding-block: 24px 40px;
 }
 .kit-app-download__copy { padding: 46px 50px; }
 .kit-app-download__copy .kit-label { color: #fff; border-color: rgba(255,255,255,.45); background: rgba(255,255,255,.1); }

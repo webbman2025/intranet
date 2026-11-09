@@ -430,10 +430,17 @@ const kit4JetsoOffers = [
 
 const kit4ExtraQuickAccess = [
   ["Shuttle bus schedule", "calendar"],
+  ["Cafeteria menu", "menu"],
   ["CKH Employee Portal", "people"],
   ["eSphere", "file"],
   ["CKH directory", "people"],
 ] as const satisfies ReadonlyArray<readonly [string, KIconName]>
+
+const defaultStaffEssentialsStrip = [
+  ["Shuttle bus schedule", "bus"],
+  ["Cafeteria menu", "food"],
+  ["Staff Jetso offers", "offers"],
+] as const
 
 const ceoColumns = [
   [
@@ -994,6 +1001,34 @@ function KitGroupBrandsStrip({
   )
 }
 
+function KitStaffEssentialsSection({
+  items,
+}: {
+  items: ReadonlyArray<readonly [string, MockupVariant]>
+}) {
+  return (
+    <section className="kit-hub-news" id="kit-policies">
+      <div className="kit-content kit-hub-layout">
+        <div>
+          <h2>Staff essentials</h2>
+          <p className="kit-lead">
+            Everyday information and services for our people.
+          </p>
+        </div>
+        <div className="kit-filmstrip">
+          {items.map(([title, image]) => (
+            <a href={`#${title}`} key={title}>
+              <MockupImage variant={image} />
+              <strong>{title}</strong>
+              <span>View details →</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
 function Kit4GroupCommsSection() {
   return (
     <section
@@ -1013,7 +1048,6 @@ function Kit4GroupCommsSection() {
       </div>
       <div className="kit4-group-comms__subhead">
         <h3 id="kit4-ceo-heading">CEO bi-weekly column</h3>
-        <a href="#kit-ceo-message">Read latest →</a>
       </div>
       <div className="kit4-group-comms__layout">
         <div className="kit4-group-comms__main">
@@ -1507,13 +1541,15 @@ export default function SharePointKitDesign({
             >
               Home
             </a>
-            <a href="#kit-apps">My tools</a>
-            <a href="#kit-announcements">Staff announcements</a>
+            <a href="#kit-apps">{isKit4 ? "Quick access" : "My tools"}</a>
+            <a href="#kit-announcements">
+              {isKit4 ? "Staff Jetso" : "Staff announcements"}
+            </a>
             <a
               className={pageRoute !== "home" ? "active" : ""}
               href="#kit-all-news"
             >
-              News
+              {isKit4 ? "Departments" : "News"}
             </a>
             <a href="#kit-staff-needs">Staff services</a>
             <a href="#kit-policies">Policies & forms</a>
@@ -1888,29 +1924,9 @@ export default function SharePointKitDesign({
             </div>
           </section>
 
-          <section className="kit-hub-news" id="kit-policies">
-            <div className="kit-content kit-hub-layout">
-              <div>
-                <h2>Staff essentials</h2>
-                <p className="kit-lead">
-                  Everyday information and services for our people.
-                </p>
-              </div>
-              <div className="kit-filmstrip">
-                {[
-                  ["Shuttle bus schedule", "bus"],
-                  ["Cafeteria menu", "food"],
-                  ["Staff Jetso offers", "offers"],
-                ].map(([title, image]) => (
-                  <a href={`#${title}`} key={title}>
-                    <MockupImage variant={image as MockupVariant} />
-                    <strong>{title}</strong>
-                    <span>View details →</span>
-                  </a>
-                ))}
-              </div>
-            </div>
-          </section>
+          {!isKit4 && (
+            <KitStaffEssentialsSection items={defaultStaffEssentialsStrip} />
+          )}
 
           <section className="kit-popular kit-content">
             <div className="kit-section-title">
